@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.leofindit.composables.DeviceDetails
+import com.example.leofindit.composables.FilterSideSheet
 import com.example.leofindit.composables.MainTopAppBar
 import com.example.leofindit.composables.MenuBar
 import com.example.leofindit.composables.ScanList
@@ -42,29 +43,35 @@ class MainActivity : ComponentActivity() {
                 var topBarContent by remember {
                     mutableStateOf<@Composable () -> Unit>({MainTopAppBar(navController){} })
                 }
-                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                val menuDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                val FilterDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
+
                 LaunchedEffect(navController) {
                     navController.currentBackStackEntryFlow.collect { entry ->
                         topBarContent = if (entry.destination.route == "Scan List") {
                             {
-                                TopAppBarFilter( onIconClick =
-                                {
+                                TopAppBarFilter( onMenuClick = {
                                     scope.launch {
-                                        drawerState.apply {
+                                        menuDrawerState.apply {
                                             if (isClosed) open() else close()
                                         }
                                     }
-                                })
+                                                               },
+                                    onIconClick = {
+                                        scope.launch {
+                                        FilterDrawerState.apply {
+                                            if (isClosed) open() else close()
+                                        }
+                                    }}
+                                )
                             }
                         }
                         else {
                             {
-                                MainTopAppBar(
-                                    navController,
-                                    onMenuClick = {
+                                MainTopAppBar(navController, onMenuClick = {
                                         scope.launch {
-                                            drawerState.apply {
+                                            menuDrawerState.apply {
                                                 if (isClosed) open() else close()
                                             }
                                         }
@@ -74,36 +81,37 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-                MenuBar(drawerState = drawerState, scope = scope,) {
-                    Scaffold(
-                        topBar = topBarContent
 
-                    ) { innerPadding ->
-                        val modifier = Modifier.padding(innerPadding)
-                        NavHost(
-                            navController = navController,
-                            startDestination = "Start Scan"
-                        ) {
-                            composable("Start Scan") {
-                                StartScan(navController = navController)
-                            }
-                            composable("Scan List") {
-                                ScanList(navController = navController)
-                            }
-                            composable(
-                                route = "Device Details/{name}/{uuid}",
-                                arguments = listOf(
-                                    navArgument("name") { type = NavType.StringType },
-                                    navArgument("uuid") { type = NavType.StringType },
-                                )
-                            ) { backStackEntry ->
-                                val name = backStackEntry.arguments?.getString("name")
-                                val uuid = backStackEntry.arguments?.getString("uuid")
-                                DeviceDetails(
-                                    navController = navController,
-                                    deviceName = name,
-                                    deviceUUID = uuid
-                                )
+                MenuBar(drawerState = menuDrawerState, scope = scope,) {
+                    FilterSideSheet(drawerState = FilterDrawerState, scope = scope) {
+                        Scaffold(topBar = topBarContent) { innerPadding ->
+                            val modifier = Modifier.padding(innerPadding)
+                            NavHost(
+                                navController = navController,
+                                startDestination = "Start Scan"
+                            ) {
+                                composable("Start Scan") {
+                                    StartScan(navController = navController)
+                                    //FilterSideSheet()
+                                }
+                                composable("Scan List") {
+                                    ScanList(modifier = modifier, navController = navController)
+                                }
+                                composable(
+                                    route = "Device Details/{name}/{uuid}",
+                                    arguments = listOf(
+                                        navArgument("name") { type = NavType.StringType },
+                                        navArgument("uuid") { type = NavType.StringType },
+                                    )
+                                ) { backStackEntry ->
+                                    val name = backStackEntry.arguments?.getString("name")
+                                    val uuid = backStackEntry.arguments?.getString("uuid")
+                                    DeviceDetails(
+                                        navController = navController,
+                                        deviceName = name,
+                                        deviceUUID = uuid
+                                    )
+                                }
                             }
                         }
                     }

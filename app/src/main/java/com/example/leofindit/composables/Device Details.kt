@@ -45,10 +45,11 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-//todo pass device class instead of name uuid ...etc
+//todo pass device class instead of name, uuid, ...etc
 fun DeviceDetails(modifier: Modifier = Modifier, navController: NavController, deviceName:String?, deviceUUID:String?) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
     val options = listOf("White List", "Black List")
+
     Scaffold(
         modifier = modifier,
         topBar = { MainTopAppBar(navController) {} },

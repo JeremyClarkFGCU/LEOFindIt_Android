@@ -35,7 +35,7 @@ fun StartScan(modifier: Modifier = Modifier, navController: NavController) {
         modifier = modifier,
         //topBar = { MainTopAppBar(navController) }
     )
-    {  innerPadding ->
+    {
 
         Column (
             modifier = modifier
