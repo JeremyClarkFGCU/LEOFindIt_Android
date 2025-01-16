@@ -1,44 +1,31 @@
 package com.example.leofindit
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.leofindit.composables.BluetoothPermission
-import com.example.leofindit.composables.DeviceDetails
-import com.example.leofindit.composables.FilterSideSheet
 import com.example.leofindit.composables.Introduction
-import com.example.leofindit.composables.IntroductionMainView
 import com.example.leofindit.composables.LocationAccess
-import com.example.leofindit.composables.MainTopAppBar
-import com.example.leofindit.composables.MenuBar
+import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.NotificationPermission
 import com.example.leofindit.composables.PermissionsDone
-import com.example.leofindit.composables.ScanList
-import com.example.leofindit.composables.StartScan
-import com.example.leofindit.composables.TopAppBarFilter
 import com.example.leofindit.ui.theme.LeoFindItTheme
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
@@ -47,74 +34,114 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LeoFindItTheme {
-                val navController = rememberNavController()
-                var topBarContent by remember {
-                    mutableStateOf<@Composable () -> Unit>({ MainTopAppBar(navController) {} })
-                }
-                val menuDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                val FilterDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                val scope = rememberCoroutineScope()
+                val MainNavController = rememberNavController()
+                val introNavController = rememberNavController()
 
-                LaunchedEffect(navController) {
-                    navController.currentBackStackEntryFlow.collect { entry ->
-                        topBarContent = if (entry.destination.route == "Scan List") {
-                            {
-                                TopAppBarFilter(onMenuClick = {
-                                    scope.launch {
-                                        menuDrawerState.apply {
-                                            if (isClosed) open() else close()
-                                        }
-                                    }
-                                },
-                                    onIconClick = {
-                                        scope.launch {
-                                            FilterDrawerState.apply {
-                                                if (isClosed) open() else close()
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-                        } else {
-                            {
-                                MainTopAppBar(navController, onMenuClick = {
-                                    scope.launch {
-                                        menuDrawerState.apply {
-                                            if (isClosed) open() else close()
-                                        }
-                                    }
-                                }
-                                )
-                            }
-                        }
-                    }
-                }
-                Surface {
-                    val introNavController = rememberNavController()
-                    NavHost(
-                        navController = introNavController,
-                        startDestination = "Introduction"
-                    ) {
-                        composable("Introduction") {
-                            Introduction(navController = introNavController)
-                            //FilterSideSheet()
-                        }
-                        composable("Location Permission") {
-                            LocationAccess(navController = introNavController)
-                        }
-                        composable("Bluetooth Permission") {
-                            BluetoothPermission(navController = introNavController)
-                        }
-                        composable("Notification Access") {
-                            NotificationPermission(navController = introNavController)
-                        }
-                        composable("Permission Done") {
-                            PermissionsDone(navController = introNavController)
-                        }
-                    }
+                val context = applicationContext
+                var isFirstLaunch by remember { mutableStateOf(true) }
+
+                // Check shared preferences for first launch state
+                LaunchedEffect(Unit) {
+                    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
                 }
 
+//                var topBarContent by remember {
+//                    mutableStateOf<@Composable () -> Unit>({ MainTopAppBar(navController) {} })
+//                }
+//                val menuDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+//                val FilterDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+//                val scope = rememberCoroutineScope()
+//
+//                LaunchedEffect(navController) {
+//                    navController.currentBackStackEntryFlow.collect { entry ->
+//                        topBarContent = if (entry.destination.route == "Scan List") {
+//                            {
+//                                TopAppBarFilter(onMenuClick = {
+//                                    scope.launch {
+//                                        menuDrawerState.apply {
+//                                            if (isClosed) open() else close()
+//                                        }
+//                                    }
+//                                },
+//                                    onIconClick = {
+//                                        scope.launch {
+//                                            FilterDrawerState.apply {
+//                                                if (isClosed) open() else close()
+//                                            }
+//                                        }
+//                                    }
+//                                )
+//                            }
+//                        } else {
+//                            {
+//                                MainTopAppBar(navController, onMenuClick = {
+//                                    scope.launch {
+//                                        menuDrawerState.apply {
+//                                            if (isClosed) open() else close()
+//                                        }
+//                                    }
+//                                }
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+
+
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    if (isFirstLaunch) {
+                        IntroNavigator(
+                            introNavController,
+                            onFinish = {
+                                val sharedPreferences =
+                                    context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                                sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
+                                isFirstLaunch = false
+                            }
+                        )
+                    } else {
+                        MainNavigator(mainNavigator = MainNavController)
+                    }
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun IntroNavigator(introNavController: NavHostController, onFinish:  () -> Unit) {
+    NavHost(
+        navController = introNavController,
+        startDestination = "Introduction"
+    ) {
+        composable("Introduction") {
+            Introduction(navController = introNavController)
+            //FilterSideSheet()
+        }
+        composable("Location Permission") {
+            LocationAccess(navController = introNavController)
+        }
+        composable("Bluetooth Permission") {
+            BluetoothPermission(navController = introNavController)
+        }
+        composable("Notification Access") {
+            NotificationPermission(navController = introNavController)
+        }
+        composable("Permission Done") {
+            PermissionsDone(navController = introNavController,  onFinish = onFinish)
+        }
+    }
+}
+
+@Composable
+fun MainNavigator(mainNavigator: NavHostController) {
+    NavHost(
+        navController = mainNavigator,
+        startDestination = "Manual Scan"
+    ) {
+        composable("Manual Scan") {
+            ManualScanning(navController = mainNavigator,)
         }
     }
 }

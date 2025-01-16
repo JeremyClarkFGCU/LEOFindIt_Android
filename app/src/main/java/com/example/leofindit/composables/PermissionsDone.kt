@@ -12,7 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +27,7 @@ import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
 @Composable
-fun PermissionsDone(navController: NavController? = null) {
+fun PermissionsDone(navController: NavController? = null, onFinish: (() -> Unit)? = null) {
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -41,13 +40,12 @@ fun PermissionsDone(navController: NavController? = null) {
             fontWeight = FontWeight.Bold,
             fontSize = 32.sp
         )
-        ScanningAnimation(200f, true)
-//        Icon(
-//            imageVector = ImageVector.vectorResource(R.drawable.baseline_check_circle_24),
-//            contentDescription = "Check Mark",
-//            tint = MaterialTheme.colorScheme.primary,
-//            modifier = Modifier.size(100.dp)
-//        )
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.baseline_check_circle_24),
+            contentDescription = "Check Mark",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(100.dp)
+        )
         Column {
             Text(
                 text = "Important: Background scanning does not work with AirTags and \"Find My\"" +
@@ -66,7 +64,11 @@ fun PermissionsDone(navController: NavController? = null) {
             )
         }
         Button(
-            onClick = {},
+            onClick = {
+                if (onFinish != null) {
+                    onFinish()
+                }
+            },
             modifier = Modifier.fillMaxWidth(.75f)
 
         ) {
