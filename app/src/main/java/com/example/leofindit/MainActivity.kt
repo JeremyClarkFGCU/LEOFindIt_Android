@@ -26,6 +26,7 @@ import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.NotificationPermission
 import com.example.leofindit.composables.PermissionsDone
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.proximitytracker.ui.TrackerDetails
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
@@ -142,6 +143,9 @@ fun MainNavigator(mainNavigator: NavHostController) {
     ) {
         composable("Manual Scan") {
             ManualScanning(navController = mainNavigator,)
+        }
+        composable (route = "Tracker Details"){
+            TrackerDetails()
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.oldUI
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
