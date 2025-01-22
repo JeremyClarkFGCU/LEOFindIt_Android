@@ -34,6 +34,7 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 @Composable
 fun ManualScanning(navController : NavController? = null) {
     //Home page
+    val isBluetoothOff by remember { mutableStateOf(false) }
     val numberOfTrackers: Int = 0
     var isScanning by remember { mutableStateOf(true) }
     LazyColumn(
@@ -52,14 +53,20 @@ fun ManualScanning(navController : NavController? = null) {
                 )
             }
         }
-        //if scanning on then show scanning
-        if (!isScanning) {
-            item { Scanning() }
+        if (isBluetoothOff) {
+            item { BluetoothOff() }
         }
-        //else show list
         else {
-            items(count = 30) {
-                DeviceListEntry(navController)
+            //if scanning on then show scanning
+            if (!isScanning) {
+                item { Scanning() }
+            }
+            //else show list
+            else {
+                items(count = 30) {
+                    DeviceListEntry(navController)
+                    Spacer(modifier = Modifier.size(8.dp))
+                }
             }
         }
     }

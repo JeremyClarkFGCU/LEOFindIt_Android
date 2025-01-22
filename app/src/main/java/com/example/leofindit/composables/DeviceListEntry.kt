@@ -26,9 +26,10 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigator
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
-
+//todo pass device object
+//samsung tag for example only
 @Composable
-fun DeviceListEntry(navController: NavController? = null) {
+fun DeviceListEntry(navController: NavController? = null, deviceName: String? = "Samsung Tag") {
     Card(
         modifier = Modifier.size(width = 360.dp, height = 40.dp),
 //        colors = CardDefaults.cardColors(
@@ -57,7 +58,7 @@ fun DeviceListEntry(navController: NavController? = null) {
                 )
                 Column {
                     Text(
-                        text = "Device Name",
+                        text = "$deviceName",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.width(192.dp),
                     )
