@@ -36,6 +36,7 @@ fun DeviceListEntry(navController: NavController? = null, deviceName: String? = 
 //            containerColor = MaterialTheme.colorScheme.onSurface
 //        ),
         onClick = {
+            //navController?.clearBackStack("Tracker Details")
             navController?.navigate(route ="Tracker Details")
         }
     ) {

@@ -7,12 +7,14 @@ package com.example.leofindit.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,14 +34,16 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 
 // change text in 6 seconds
 @Composable
-fun ManualScanning(navController : NavController? = null) {
+fun ManualScanning(navController : NavController? = null, innerPadding: PaddingValues = PaddingValues(0.dp)) {
     //Home page
     val isBluetoothOff by remember { mutableStateOf(false) }
     val numberOfTrackers: Int = 0
     var isScanning by remember { mutableStateOf(true) }
     LazyColumn(
+        contentPadding = innerPadding ,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.fillMaxSize()
     )
     {
         item {
@@ -64,7 +68,7 @@ fun ManualScanning(navController : NavController? = null) {
             //else show list
             else {
                 items(count = 30) {
-                    DeviceListEntry(navController)
+                    DeviceListEntry(navController,)
                     Spacer(modifier = Modifier.size(8.dp))
                 }
             }

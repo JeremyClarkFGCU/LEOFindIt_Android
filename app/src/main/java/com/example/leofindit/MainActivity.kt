@@ -6,9 +6,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -95,8 +95,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {},
-                    bottomBar = { BottomBar() },
-                ) {
+                    bottomBar = { if(!isFirstLaunch) BottomBar() },
+                ) { innerPadding ->
 
                     if (isFirstLaunch) {
                         IntroNavigator(
@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     } else {
-                        MainNavigator(mainNavigator = MainNavController)
+                        MainNavigator(mainNavigator = MainNavController, innerPadding = innerPadding)
                     }
                 }
             }
@@ -143,13 +143,13 @@ fun IntroNavigator(introNavController: NavHostController, onFinish:  () -> Unit)
 }
 
 @Composable
-fun MainNavigator(mainNavigator: NavHostController) {
+fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues) {
     NavHost(
         navController = mainNavigator,
         startDestination = "Manual Scan"
     ) {
         composable("Manual Scan") {
-            ManualScanning(navController = mainNavigator,)
+            ManualScanning(navController = mainNavigator, innerPadding = innerPadding)
         }
         composable (route = "Tracker Details"){
             TrackerDetails()
