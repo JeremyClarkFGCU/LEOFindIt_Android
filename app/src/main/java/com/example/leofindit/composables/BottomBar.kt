@@ -1,7 +1,6 @@
 package com.example.leofindit.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +29,7 @@ fun BottomBar() {
         ImageVector.vectorResource(R.drawable.baseline_home_24),
         ImageVector.vectorResource(R.drawable.baseline_settings_24)
     )
-    var unselectedIcon = listOf(
+    val unselectedIcon = listOf(
         ImageVector.vectorResource(R.drawable.outline_search_24),
         ImageVector.vectorResource(R.drawable.outline_home_24),
         ImageVector.vectorResource(R.drawable.outline_settings_24)
@@ -44,8 +43,8 @@ fun BottomBar() {
                     contentDescription = item
                 )
             },
-            label = {Text(text = items[index])},
-            onClick = {selectedItem = index },
+            label = { Text( text = items[index] ) },
+            onClick = { selectedItem = index },
             selected = selectedItem == index,
             alwaysShowLabel = false
         )
