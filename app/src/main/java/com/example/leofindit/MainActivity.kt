@@ -28,7 +28,7 @@ import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.NotificationPermission
 import com.example.leofindit.composables.PermissionsDone
 import com.example.leofindit.ui.theme.LeoFindItTheme
-import com.example.proximitytracker.ui.TrackerDetails
+import com.example.leofindit.composables.TrackerDetails
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {

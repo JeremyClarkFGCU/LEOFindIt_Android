@@ -23,7 +23,7 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 @Composable
 fun BottomBar() {
     val items = listOf( "Search", "Home", "Settings")
-    var selectedItem by remember { mutableIntStateOf(0) }
+    var selectedItem by remember { mutableIntStateOf(1) }
     val selectedIcon = listOf(
         ImageVector.vectorResource(R.drawable.baseline_search_24),
         ImageVector.vectorResource(R.drawable.baseline_home_24),
@@ -63,7 +63,7 @@ fun BottomBar() {
 @Composable
 fun BottomBarPreview() {
     LeoFindItTheme {
-        Surface() {
+        Surface {
             BottomBar()
         }
     }
