@@ -1,5 +1,7 @@
 package com.example.leofindit.composables
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,12 +39,14 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
@@ -54,6 +58,8 @@ fun TrackerDetails() {
     var bluetoothData = null
     var clock: Nothing? = null
     var notCurrentlyReachable: Boolean? = false
+    val context = LocalContext.current
+    val webIntent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://support.thetileapp.com/hc/en-us/articles/360037001854-Disconnect-a-Partner-Device-from-My-Tile-Account#:~:text=During%20this%20process%2C%20the%20device,back%20to%20your%20Tile%20account."))
 
     Column(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -169,7 +175,7 @@ fun TrackerDetails() {
                 border = BorderStroke(Dp.Hairline, Color.LightGray)
             ) {
                 RoundedListItem(
-                    onClick = {},
+                    onClick = {context.startActivity(webIntent)},
                     icon = ImageVector.vectorResource(R.drawable.outline_info_24),
                     color = Color.Green,
                     leadingText = "Manufacture's Website",

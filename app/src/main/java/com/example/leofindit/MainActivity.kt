@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import com.example.leofindit.composables.NotificationPermission
 import com.example.leofindit.composables.PermissionsDone
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.composables.TrackerDetails
+import kotlinx.coroutines.flow.map
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
@@ -37,16 +39,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LeoFindItTheme {
-                val MainNavController = rememberNavController()
+                val mainNavController = rememberNavController()
                 val introNavController = rememberNavController()
+                val currentRoute by mainNavController.currentBackStackEntryFlow
+                    .map { it.destination.route }
+                    .collectAsState(initial = null)
 
                 val context = applicationContext
-                var isFirstLaunch by remember { mutableStateOf(true) }
-
-                // Check shared preferences for first launch state
-                LaunchedEffect(Unit) {
-                    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                    isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
+                val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                var isFirstLaunch by remember {
+                    mutableStateOf(sharedPreferences.getBoolean("isFirstLaunch", true))
                 }
 
 //                var topBarContent by remember {
@@ -95,21 +97,22 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {},
-                    bottomBar = { if(!isFirstLaunch) BottomBar() },
+                    bottomBar = {
+                        // only shows the bottom bar during the manual scan screen
+                        if(currentRoute == "Manual Scan") { BottomBar() }
+                    },
                 ) { innerPadding ->
 
                     if (isFirstLaunch) {
                         IntroNavigator(
                             introNavController,
                             onFinish = {
-                                val sharedPreferences =
-                                    context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                                 sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
                                 isFirstLaunch = false
                             }
                         )
                     } else {
-                        MainNavigator(mainNavigator = MainNavController, innerPadding = innerPadding)
+                        MainNavigator(mainNavigator = mainNavController, innerPadding = innerPadding)
                     }
                 }
             }
