@@ -3,27 +3,17 @@ package com.example.leofindit.composables
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -46,20 +36,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
+import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
 
 @Composable
-fun TrackerDetails() {
+fun TrackerDetails(navController: NavController? = null) {
     var ignoreTracker by remember { mutableStateOf(false) }
-    var tracker = "Tile"
+    val tracker = "Tile"
     var bluetoothData = null
     var clock: Nothing? = null
     var notCurrentlyReachable: Boolean? = false
     val context = LocalContext.current
-    val webIntent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://support.thetileapp.com/hc/en-us/articles/360037001854-Disconnect-a-Partner-Device-from-My-Tile-Account#:~:text=During%20this%20process%2C%20the%20device,back%20to%20your%20Tile%20account."))
+    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://support.thetileapp.com/hc/en-us/articles/360037001854-Disconnect-a-Partner-Device-from-My-Tile-Account#:~:text=During%20this%20process%2C%20the%20device,back%20to%20your%20Tile%20account."))
 
     Column(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -118,11 +108,12 @@ fun TrackerDetails() {
                 modifier = Modifier.fillMaxWidth()
             )
             //map TBA
-            Card(modifier = Modifier
-                .height(200.dp)
-                .width(400.dp),
-                onClick = {}
-            ){}
+            MapView()
+//            Card(modifier = Modifier
+//                .height(200.dp)
+//                .width(400.dp),
+//                onClick = {}
+//            ){}
             // options for tracker
             Card(
                 modifier = Modifier
@@ -132,7 +123,7 @@ fun TrackerDetails() {
             ) {
                 // list of options
                 RoundedListItem(
-                    onClick = {},
+                    onClick = {navController?.navigate("Precision Finding")},
                     color = Color(0xff007aff),
                     icon = ImageVector.vectorResource(R.drawable.outline_explore_24),
                     leadingText = "Locate Tracker", trailingText = "Nearby"
@@ -193,58 +184,7 @@ fun TrackerDetails() {
     }
 }
 
-@Composable
-fun RoundedListItem(
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    icon: ImageVector,
-    color: Color,
-    leadingText: String,
-    trailingText: String = "",
-    trailingIcon: ImageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-    customTrailingContent : @Composable (() -> Unit)? = null,
-    iconModifier: Modifier = Modifier,
-) {
-        ListItem(
-            leadingContent = {
-                Box(
-                    modifier = modifier
-                        .size(24.dp) // Circle size
-                        .background(
-                            color = color,
-                            shape = CircleShape // Circle shape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.background,
-                    )
-                }
-            },
-            headlineContent = { Text(leadingText) },
-            trailingContent = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (customTrailingContent != null) {
-                        customTrailingContent()
-                    } else {
-                        Text(
-                            text = trailingText,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Icon(
-                            imageVector = trailingIcon,
-                            contentDescription = null,
-                            tint = Color.Gray,
-                            modifier = iconModifier
-                        )
-                    }
-                }
-            },
-            modifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier
-        )
-}
+
 
 @Preview
 @Composable

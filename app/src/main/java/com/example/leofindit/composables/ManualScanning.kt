@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +35,7 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 fun ManualScanning(navController : NavController? = null, innerPadding: PaddingValues = PaddingValues(0.dp)) {
     //Home page
     val isBluetoothOff by remember { mutableStateOf(false) }
-    val numberOfTrackers: Int = 0
+    val numberOfTrackers = 0
     var isScanning by remember { mutableStateOf(true) }
     LazyColumn(
         contentPadding = innerPadding ,
@@ -68,7 +66,7 @@ fun ManualScanning(navController : NavController? = null, innerPadding: PaddingV
             //else show list
             else {
                 items(count = 30) {
-                    DeviceListEntry(navController,)
+                    DeviceListEntry(navController)
                     Spacer(modifier = Modifier.size(8.dp))
                 }
             }

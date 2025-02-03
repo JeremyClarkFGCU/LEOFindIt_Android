@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,8 +27,9 @@ import com.example.leofindit.composables.LocationAccess
 import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.NotificationPermission
 import com.example.leofindit.composables.PermissionsDone
-import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.composables.PrecisionFinding
 import com.example.leofindit.composables.TrackerDetails
+import com.example.leofindit.ui.theme.LeoFindItTheme
 import kotlinx.coroutines.flow.map
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -155,7 +155,10 @@ fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues)
             ManualScanning(navController = mainNavigator, innerPadding = innerPadding)
         }
         composable (route = "Tracker Details"){
-            TrackerDetails()
+            TrackerDetails(navController = mainNavigator)
+        }
+        composable("Precision Finding") {
+            PrecisionFinding(navController = mainNavigator)
         }
     }
 }
