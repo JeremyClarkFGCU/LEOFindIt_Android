@@ -57,13 +57,11 @@ fun DeviceListEntry(navController: NavController? = null, deviceName: String? = 
                     contentDescription = "Device Type Icon",
                     tint = Color.Unspecified
                 )
-                Column {
                     Text(
                         text = "$deviceName",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.width(192.dp),
                     )
-                }
             }
             Row {
 

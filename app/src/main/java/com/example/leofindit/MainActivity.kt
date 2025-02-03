@@ -17,9 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.leofindit.composables.AppInfo
 import com.example.leofindit.composables.BluetoothPermission
 import com.example.leofindit.composables.BottomBar
 import com.example.leofindit.composables.Introduction
@@ -28,6 +31,7 @@ import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.NotificationPermission
 import com.example.leofindit.composables.PermissionsDone
 import com.example.leofindit.composables.PrecisionFinding
+import com.example.leofindit.composables.Settings
 import com.example.leofindit.composables.TrackerDetails
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import kotlinx.coroutines.flow.map
@@ -99,7 +103,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {},
                     bottomBar = {
                         // only shows the bottom bar during the manual scan screen
-                        if(currentRoute == "Manual Scan") { BottomBar() }
+                        if(currentRoute == "Manual Scan") { BottomBar(mainNavController) }
                     },
                 ) { innerPadding ->
 
@@ -154,11 +158,21 @@ fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues)
         composable("Manual Scan") {
             ManualScanning(navController = mainNavigator, innerPadding = innerPadding)
         }
-        composable (route = "Tracker Details"){
-            TrackerDetails(navController = mainNavigator)
+        composable (
+            route = "Tracker Details/{trackerDetails}",
+            arguments = listOf(navArgument("trackerDetails") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val trackerDetails = backStackEntry.arguments?.getString("trackerDetails")
+            TrackerDetails(navController = mainNavigator, trackerDetails)
         }
         composable("Precision Finding") {
             PrecisionFinding(navController = mainNavigator)
+        }
+        composable("Settings") {
+            Settings(navController = mainNavigator)
+        }
+        composable ("App info") {
+            AppInfo(navController = mainNavigator)
         }
     }
 }

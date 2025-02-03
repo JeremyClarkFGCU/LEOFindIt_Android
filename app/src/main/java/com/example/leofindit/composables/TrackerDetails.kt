@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -42,7 +44,7 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 
 
 @Composable
-fun TrackerDetails(navController: NavController? = null) {
+fun TrackerDetails(navController: NavController? = null, tackerDetails: String? = null) {
     var ignoreTracker by remember { mutableStateOf(false) }
     val tracker = "Tile"
     var bluetoothData = null
@@ -70,6 +72,12 @@ fun TrackerDetails(navController: NavController? = null) {
                 modifier = Modifier.weight(1f),
                 maxLines = 1
             )
+            IconButton(onClick = {navController?.popBackStack()}) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.outline_close_24),
+                    contentDescription = "Back"
+                )
+            }
         }
 
         // Connection status and last seen time
