@@ -1,6 +1,7 @@
 package com.example.leofindit.composables
 
 import android.content.Intent
+import android.media.Image
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +45,7 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 
 
 @Composable
-fun TrackerDetails(navController: NavController? = null, tackerDetails: String? = null) {
+fun TrackerDetails(navController: NavController? = null, trackerDetails : String? = null) {
     var ignoreTracker by remember { mutableStateOf(false) }
     val tracker = "Tile"
     var bluetoothData = null
@@ -54,14 +55,20 @@ fun TrackerDetails(navController: NavController? = null, tackerDetails: String? 
     val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://support.thetileapp.com/hc/en-us/articles/360037001854-Disconnect-a-Partner-Device-from-My-Tile-Account#:~:text=During%20this%20process%2C%20the%20device,back%20to%20your%20Tile%20account."))
 
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
+       // modifier = Modifier.padding(horizontal = 16.dp),
     ) {
         Spacer(modifier = Modifier.size(56.dp))
         // Device name
+        IconButton(onClick = { navController?.popBackStack() }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
+                contentDescription = "Back Button",
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -72,18 +79,12 @@ fun TrackerDetails(navController: NavController? = null, tackerDetails: String? 
                 modifier = Modifier.weight(1f),
                 maxLines = 1
             )
-            IconButton(onClick = {navController?.popBackStack()}) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.outline_close_24),
-                    contentDescription = "Back"
-                )
-            }
         }
 
         // Connection status and last seen time
         val connectionStatus = true
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (notCurrentlyReachable == true) {

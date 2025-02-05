@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
@@ -34,6 +35,9 @@ fun BottomBar(navController: NavController? = null) {
         ImageVector.vectorResource(R.drawable.outline_search_24),
         ImageVector.vectorResource(R.drawable.outline_settings_24)
     )
+
+    val navBackStackEntry = navController?.currentBackStackEntryAsState()?.value
+    val currentDestination = navBackStackEntry?.destination?.route
     NavigationBar (modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
         items.forEachIndexed { index, item->
         NavigationBarItem(
@@ -46,7 +50,8 @@ fun BottomBar(navController: NavController? = null) {
             label = { Text( text = items[index] ) },
             onClick = {
                     selectedItem = index
-                    navController?.navigate(navList[index])
+                    if(currentDestination != navList[index])
+                        navController?.navigate(navList[index])
                       },
             selected = selectedItem == index,
             alwaysShowLabel = false

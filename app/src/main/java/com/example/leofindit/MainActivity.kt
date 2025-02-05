@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
             LeoFindItTheme {
                 val mainNavController = rememberNavController()
                 val introNavController = rememberNavController()
+                val showBottomBar = listOf("Manual Scan", "Settings", "App info")
                 val currentRoute by mainNavController.currentBackStackEntryFlow
                     .map { it.destination.route }
                     .collectAsState(initial = null)
@@ -103,7 +104,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {},
                     bottomBar = {
                         // only shows the bottom bar during the manual scan screen
-                        if(currentRoute == "Manual Scan") { BottomBar(mainNavController) }
+                        if(currentRoute in showBottomBar) { BottomBar(mainNavController) }
                     },
                 ) { innerPadding ->
 
@@ -163,7 +164,7 @@ fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues)
             arguments = listOf(navArgument("trackerDetails") { type = NavType.StringType })
         ) { backStackEntry ->
             val trackerDetails = backStackEntry.arguments?.getString("trackerDetails")
-            TrackerDetails(navController = mainNavigator, trackerDetails)
+            TrackerDetails(navController = mainNavigator, trackerDetails  = trackerDetails)
         }
         composable("Precision Finding") {
             PrecisionFinding(navController = mainNavigator)

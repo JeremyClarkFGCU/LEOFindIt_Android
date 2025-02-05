@@ -1,7 +1,6 @@
 package com.example.leofindit.composables
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -37,7 +36,7 @@ fun DeviceListEntry(navController: NavController? = null, deviceName: String? = 
 //        ),
         onClick = {
             //navController?.clearBackStack("Tracker Details")
-            navController?.navigate(route ="Tracker Details")
+            navController?.navigate(route ="Tracker Details/")
         }
     ) {
         Row(
