@@ -31,42 +31,49 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 
 @Composable
 fun Settings(navController: NavController? = null) {
-    Column(modifier= Modifier.padding(horizontal = 16.dp)) {
+    Column {
         Spacer(modifier = Modifier.size(56.dp))
+
+        IconButton(
+            onClick = { navController?.popBackStack() },
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
+                contentDescription = "Back Arrow"
+            )
+        }
+
+        // Title and close button row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp), // Padding applied here instead
             verticalAlignment = Alignment.CenterVertically
         ) {
-           Text(
-               text = "Settings",
-               style = MaterialTheme.typography.headlineLarge,
-               fontWeight = FontWeight.Bold,
-               modifier = Modifier.weight(1f)
-           )
-           IconButton(onClick = {navController?.popBackStack()}) {
-               Icon(
-                   imageVector = ImageVector.vectorResource(R.drawable.outline_close_24),
-                   contentDescription = "Back Button",
-               )
-           }
+            Text(
+                text = "Settings",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f).padding()
+            )
         }
-        Card (
+
+        Card(
             modifier = Modifier
-                .padding(horizontal = 4.dp)
+                .padding(horizontal = 16.dp)
                 .shadow(elevation = 24.dp),
             border = BorderStroke(Dp.Hairline, Color.LightGray)
-        ){
+        ) {
             RoundedListItem(
-                onClick = {navController?.navigate("App Info")},
+                onClick = { navController?.navigate("App Info") },
                 icon = ImageVector.vectorResource(R.drawable.outline_info_24),
                 color = Color.Green,
                 leadingText = "Information & Contact"
-                )
+            )
         }
     }
 }
+
 
 @Preview
 @Composable

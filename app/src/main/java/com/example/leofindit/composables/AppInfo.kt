@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,18 +38,26 @@ import androidx.core.net.toUri
 
 @SuppressLint("QueryPermissionsNeeded")
 @Composable
-fun AppInfo(navController: NavController? =null) {
+fun AppInfo(navController: NavController? = null) {
     val context = LocalContext.current
-    val emailAddress = "leofindit@gmail.com"
+    val emailAddress = "leofindit@gmail.com" //example
     val subject = "Feedback; Version 1.0.0"
-    val mailIntent = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:$emailAddress")
-        putExtra(Intent.EXTRA_SUBJECT, subject)
-    }
+    val mailIntent = Intent(
+        Intent.ACTION_SENDTO,
+        Uri.parse("mailto:$emailAddress?subject=${Uri.encode(subject)}")
+    )
     val briansGitHub = Intent(Intent.ACTION_VIEW, "https://github.com/BzapataR".toUri())
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+    Column() {
         Spacer(modifier = Modifier.size(56.dp))
+        IconButton(
+            onClick = { navController?.popBackStack() }
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
+                contentDescription = null,
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,20 +66,15 @@ fun AppInfo(navController: NavController? =null) {
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-            Column (
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Proximity Tracker for Android",
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center,
-                )
-                Text(
-                    text = "Version 0.0.1",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
+            Text(
+                text = "Proximity Tracker for Android",
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = "Version 1.0.0",
+                style = MaterialTheme.typography.bodySmall,
+            )
 
         }
         Card(
@@ -80,7 +85,9 @@ fun AppInfo(navController: NavController? =null) {
         ) {
             RoundedListItem(
                 onClick = {
-                        context.startActivity(Intent.createChooser(mailIntent, "Choose Email Client"))
+                    context.startActivity(
+                        Intent.createChooser(mailIntent, "Choose Email Client")
+                    )
                 },
                 icon = ImageVector.vectorResource(R.drawable.baseline_mail_24),
                 color = colorResource(R.color.apple_blue_light),
@@ -91,6 +98,7 @@ fun AppInfo(navController: NavController? =null) {
         }
 
         Spacer(modifier = Modifier.size(16.dp))
+
         Card(
             modifier = Modifier
                 .padding(horizontal = 4.dp)
@@ -98,7 +106,7 @@ fun AppInfo(navController: NavController? =null) {
             border = BorderStroke(Dp.Hairline, Color.LightGray)
         ) {
             RoundedListItem(
-                onClick = { context.startActivity(briansGitHub)},
+                onClick = { context.startActivity(briansGitHub) },
                 icon = ImageVector.vectorResource(R.drawable.outline_data_object_24),
                 color = Color.Green,
                 leadingText = "UI Developer", trailingText = "Brian Zapata",
