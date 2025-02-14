@@ -3,6 +3,7 @@ package com.example.leofindit
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -35,6 +36,7 @@ import com.example.leofindit.composables.Settings
 import com.example.leofindit.composables.TrackerDetails
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import kotlinx.coroutines.flow.map
+import androidx.core.content.edit
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
@@ -43,6 +45,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LeoFindItTheme {
+                BtHelper.init(context = this)
+                LocationHelper.locationInit(context = this)
                 val mainNavController = rememberNavController()
                 val introNavController = rememberNavController()
                 val currentRoute by mainNavController.currentBackStackEntryFlow
@@ -54,6 +58,7 @@ class MainActivity : ComponentActivity() {
                 var isFirstLaunch by remember {
                     mutableStateOf(sharedPreferences.getBoolean("isFirstLaunch", true))
                 }
+                Log.e("e", "Bluetooth Adapter : ${BtHelper.isEnabled()}")
 
 //                var topBarContent by remember {
 //                    mutableStateOf<@Composable () -> Unit>({ MainTopAppBar(navController) {} })
@@ -111,8 +116,8 @@ class MainActivity : ComponentActivity() {
                         IntroNavigator(
                             introNavController,
                             onFinish = {
-                                sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
-                                isFirstLaunch = false
+                                sharedPreferences.edit { putBoolean("isFirstLaunch", false) }
+                                isFirstLaunch = false //todo change back to false
                             }
                         )
                     } else {
@@ -125,7 +130,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun IntroNavigator(introNavController: NavHostController, onFinish:  () -> Unit) {
+fun IntroNavigator(introNavController: NavHostController, onFinish:  () -> Unit, ) {
     NavHost(
         navController = introNavController,
         startDestination = "Introduction"

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import androidx.core.net.toUri
 
 @SuppressLint("QueryPermissionsNeeded")
 @Composable
@@ -43,7 +44,7 @@ fun AppInfo(navController: NavController? =null) {
         data = Uri.parse("mailto:$emailAddress")
         putExtra(Intent.EXTRA_SUBJECT, subject)
     }
-    val briansGitHub = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/BzapataR"))
+    val briansGitHub = Intent(Intent.ACTION_VIEW, "https://github.com/BzapataR".toUri())
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.size(56.dp))
@@ -79,7 +80,7 @@ fun AppInfo(navController: NavController? =null) {
         ) {
             RoundedListItem(
                 onClick = {
-                        context.startActivity(Intent.createChooser(mailIntent, "Choose Email Client")) // ✅ Using a chooser
+                        context.startActivity(Intent.createChooser(mailIntent, "Choose Email Client"))
                 },
                 icon = ImageVector.vectorResource(R.drawable.baseline_mail_24),
                 color = colorResource(R.color.apple_blue_light),
