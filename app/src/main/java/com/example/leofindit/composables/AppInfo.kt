@@ -116,7 +116,7 @@ fun AppInfo(navController: NavController? = null) {
             RoundedListItem(
                 onClick = { context.startActivity(briansGitHub) },
                 icon = ImageVector.vectorResource(R.drawable.outline_person_24),
-                color = Color(0xffff9900),
+                color = colorResource(R.color.Orange),
                 leadingText = "Maintainer", trailingText = "John Developer",
                 trailingIcon = ImageVector.vectorResource(R.drawable.baseline_link_24),
                 iconModifier = Modifier.rotate(-45F)

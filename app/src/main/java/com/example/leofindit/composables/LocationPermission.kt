@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.leofindit.LocationHelper
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -36,10 +37,10 @@ fun LocationAccess(navController: NavController? = null) {
         permissions = listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+               // Manifest.permission.ACCESS_BACKGROUND_LOCATION
         )
     )
-    val requestLocationService = Intent()
+    //val requestLocationService = Intent()
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -66,7 +67,7 @@ fun LocationAccess(navController: NavController? = null) {
         )
         Button(
             onClick = {
-                    permissionsState.launchMultiplePermissionRequest()
+                    LocationHelper.RequestPermission()//permissionsState.launchMultiplePermissionRequest()
                 when {
                    permissionsState.allPermissionsGranted -> {
                        navController?.navigate("Bluetooth Permission")

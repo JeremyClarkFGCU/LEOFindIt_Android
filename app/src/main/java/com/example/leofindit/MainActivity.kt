@@ -1,5 +1,6 @@
 package com.example.leofindit
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
@@ -30,6 +31,7 @@ import com.example.leofindit.composables.Introduction
 import com.example.leofindit.composables.LocationAccess
 import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.NotificationPermission
+import com.example.leofindit.composables.ObserveTracker
 import com.example.leofindit.composables.PermissionsDone
 import com.example.leofindit.composables.PrecisionFinding
 import com.example.leofindit.composables.Settings
@@ -37,9 +39,12 @@ import com.example.leofindit.composables.TrackerDetails
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import kotlinx.coroutines.flow.map
 import androidx.core.content.edit
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -47,6 +52,10 @@ class MainActivity : ComponentActivity() {
             LeoFindItTheme {
                 BtHelper.init(context = this)
                 LocationHelper.locationInit(context = this)
+                val permission = rememberMultiplePermissionsState(
+                    permissions = listOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,                    )
+                )
                 val mainNavController = rememberNavController()
                 val introNavController = rememberNavController()
                 val showBottomBar = listOf("Manual Scan", "Settings", "App info")
@@ -59,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 var isFirstLaunch by remember {
                     mutableStateOf(sharedPreferences.getBoolean("isFirstLaunch", true))
                 }
-                Log.e("e", "Bluetooth Adapter : ${BtHelper.isEnabled()}")
+
 
 //                var topBarContent by remember {
 //                    mutableStateOf<@Composable () -> Unit>({ MainTopAppBar(navController) {} })
@@ -179,6 +188,9 @@ fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues)
         }
         composable ("App info") {
             AppInfo(navController = mainNavigator)
+        }
+        composable("Observe Tracker") {
+            ObserveTracker(navController = mainNavigator)
         }
     }
 }

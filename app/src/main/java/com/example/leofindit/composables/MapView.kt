@@ -27,7 +27,7 @@ import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
 @Composable
-fun MapView(geoLocation : Int? = null) {
+fun MapView(geoLocation : Int? = null, ignored: Boolean? = null) {
     Card(modifier = Modifier
         .height(200.dp)
         .width(400.dp),
@@ -47,7 +47,13 @@ fun MapView(geoLocation : Int? = null) {
                  )
                  Spacer(modifier = Modifier.size(16.dp))
                  Text(
-                     text = "The map is unavailable because no locations have been found for this tracker",
+                     text = if (ignored == true) {
+                         "The map is unavailable because the tracker is ignored."
+                     }
+                     else {
+                            "The map is unavailable because no locations have " +
+                             "been found for this tracker"
+                          },
                      textAlign = TextAlign.Center,
                      style = MaterialTheme.typography.bodyLarge,
                      fontWeight = FontWeight.Bold

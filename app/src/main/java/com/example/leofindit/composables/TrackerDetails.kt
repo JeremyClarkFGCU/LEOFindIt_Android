@@ -117,7 +117,7 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
                 modifier = Modifier.fillMaxWidth()
             )
             //map TBA
-            MapView()
+            MapView(ignored = ignoreTracker)
 //            Card(modifier = Modifier
 //                .height(200.dp)
 //                .width(400.dp),
@@ -141,7 +141,7 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
                 HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
 
                 RoundedListItem(
-                    onClick = {},
+                    onClick = {navController?.navigate("Observe Tracker")},
                     color = colorResource(R.color.purple_200),
                     icon = ImageVector.vectorResource(R.drawable.outline_access_time_24),
                     leadingText = "Observe Tracker", trailingText = "Off"
@@ -174,6 +174,13 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
                     .shadow(elevation = 16.dp),
                 border = BorderStroke(Dp.Hairline, Color.LightGray)
             ) {
+                //Getting information about owner I don't think android will use this
+//                RoundedListItem(
+//                    onClick = {},
+//                    icon = ImageVector.vectorResource(R.drawable.outline_person_24),
+//                    color = colorResource(R.color.Orange),
+//                    leadingText = "Information About Owner",
+//                )
                 RoundedListItem(
                     onClick = {context.startActivity(webIntent)},
                     icon = ImageVector.vectorResource(R.drawable.outline_info_24),
