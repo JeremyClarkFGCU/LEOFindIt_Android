@@ -4,6 +4,7 @@ import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,17 +43,12 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 @androidx.annotation.RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-fun BluetoothPermission(navController: NavController? = null, context : Context? = LocalContext.current) {
+fun BluetoothPermission(navController: NavController? = null) {
 
-    val permissionsState = rememberMultiplePermissionsState(
-         permissions = listOf(
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.BLUETOOTH_SCAN,
-        )
-    )
-   // val permission = rememberPermissionState(permission = Manifest.permission.BLUETOOTH_SCAN)
+    val permissionsState = BtHelper.rememberPermissions()
     val requestBluetoothService = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+    val btEnabled by BtHelper.checkingBtEnabledState()
+    val context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -79,7 +77,7 @@ fun BluetoothPermission(navController: NavController? = null, context : Context?
             onClick = {
                 Log.i(
                     "check",
-                    "Bt service granted: ${BtHelper.isEnabled()}, " +
+                    "Bt service granted: ${BtHelper.isBtEnabled()}, " +
                     "Revoked permissions: ${
                         permissionsState.revokedPermissions.map { it.permission }
                     }"
@@ -94,23 +92,43 @@ fun BluetoothPermission(navController: NavController? = null, context : Context?
                     }
 
                     // If permissions are granted but Bluetooth is off, request to enable it
-                    permissionsState.allPermissionsGranted && !BtHelper.isEnabled() -> {
-                        context?.startActivity(requestBluetoothService,)
+                    !BtHelper.isBtEnabled() -> {
+                        BtHelper.turnOnBtService(context)
                     }
 
                     // If everything is granted and enabled, move to the next screen
-                    permissionsState.allPermissionsGranted && BtHelper.isEnabled() -> {
-                        navController?.navigate("Notification Access")
+                    permissionsState.allPermissionsGranted && BtHelper.isBtEnabled() -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            navController?.navigate("Notification Access")
+                        }
+                        else navController?.navigate("Permission Done")
                     }
 
                 }
 
-                //context?.startActivity(requestBluetoothService)
 
             },
             modifier = Modifier.fillMaxWidth(0.75f)
         ) {
-            Text("Continue")
+            Text(
+                when {// Request permissions if they aren't granted
+                    !permissionsState.allPermissionsGranted -> {
+                        "Request Bluetooth Permissions"
+                    }
+
+                    // If permissions are granted but Bluetooth is off, request to enable it
+                     !btEnabled -> {
+                        "Turn on Bluetooth Service"
+                    }
+
+                    // If everything is granted and enabled, move to the next screen
+                    btEnabled -> {
+                        "Continue"
+                    }
+
+                    else -> {"error"}
+                }
+            )
         }
     }
 }

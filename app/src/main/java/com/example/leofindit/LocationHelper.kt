@@ -20,7 +20,7 @@ import androidx.compose.runtime.State
 object LocationHelper {
     private var locationManager: LocationManager? = null
 
-    val locationPermissions = listOf(
+    private val locationPermissions = listOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
         // Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -33,7 +33,7 @@ object LocationHelper {
     }
 
     @Composable
-    fun rememberLocationEnabledState() : State<Boolean> {
+    fun checkingLocationEnabledState() : State<Boolean> {
         val context = LocalContext.current
         return produceState(initialValue = isLocationServiceEnabled()) {
 

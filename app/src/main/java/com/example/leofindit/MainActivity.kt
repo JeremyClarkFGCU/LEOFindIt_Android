@@ -1,13 +1,12 @@
 package com.example.leofindit
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
@@ -18,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -37,10 +37,8 @@ import com.example.leofindit.composables.PrecisionFinding
 import com.example.leofindit.composables.Settings
 import com.example.leofindit.composables.TrackerDetails
 import com.example.leofindit.ui.theme.LeoFindItTheme
-import kotlinx.coroutines.flow.map
-import androidx.core.content.edit
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.flow.map
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
@@ -52,10 +50,6 @@ class MainActivity : ComponentActivity() {
             LeoFindItTheme {
                 BtHelper.init(context = this)
                 LocationHelper.locationInit(context = this)
-                val permission = rememberMultiplePermissionsState(
-                    permissions = listOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,                    )
-                )
                 val mainNavController = rememberNavController()
                 val introNavController = rememberNavController()
                 val showBottomBar = listOf("Manual Scan", "Settings", "App info")
@@ -64,7 +58,7 @@ class MainActivity : ComponentActivity() {
                     .collectAsState(initial = null)
 
                 val context = applicationContext
-                val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                val sharedPreferences = context.getSharedPreferences("app_prefs", MODE_PRIVATE)
                 var isFirstLaunch by remember {
                     mutableStateOf(sharedPreferences.getBoolean("isFirstLaunch", true))
                 }
@@ -139,8 +133,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun IntroNavigator(introNavController: NavHostController, onFinish:  () -> Unit, ) {
+fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) {
     NavHost(
         navController = introNavController,
         startDestination = "Introduction"
@@ -155,6 +150,7 @@ fun IntroNavigator(introNavController: NavHostController, onFinish:  () -> Unit,
         composable("Bluetooth Permission") {
             BluetoothPermission(navController = introNavController)
         }
+        //Notification permission is not needed for API > 33
         composable("Notification Access") {
             NotificationPermission(navController = introNavController)
         }

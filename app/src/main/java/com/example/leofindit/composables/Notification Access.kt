@@ -1,5 +1,8 @@
 package com.example.leofindit.composables
 
+import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,9 +28,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NotificationPermission(navController: NavController? = null) {
+    val NotificationPermissionList = rememberPermissionState(
+        permission =
+            Manifest.permission.POST_NOTIFICATIONS
+    )
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -63,7 +76,13 @@ fun NotificationPermission(navController: NavController? = null) {
                 )
             }
             Button(
-                onClick = {navController?.navigate("Permission Done")},
+                onClick = {
+                    if (!NotificationPermissionList.status.isGranted) {
+                        NotificationPermissionList.launchPermissionRequest()
+                    } else {
+                        navController?.navigate("Permission Done")
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(.75f)
 
             ) {
@@ -76,6 +95,7 @@ fun NotificationPermission(navController: NavController? = null) {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview
 @Composable
 fun NotificationPermissionPreview() {
