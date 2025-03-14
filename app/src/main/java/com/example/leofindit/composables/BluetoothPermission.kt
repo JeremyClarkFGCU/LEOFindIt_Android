@@ -80,7 +80,9 @@ fun BluetoothPermission(navController: NavController? = null, context : Context?
                 Log.i(
                     "check",
                     "Bt service granted: ${BtHelper.isEnabled()}, " +
-                            "Revoked permissions: ${permissionsState.revokedPermissions.map { it.permission }}"
+                    "Revoked permissions: ${
+                        permissionsState.revokedPermissions.map { it.permission }
+                    }"
                 )
                 //permission.launchPermissionRequest()
 
