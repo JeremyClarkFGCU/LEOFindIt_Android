@@ -14,6 +14,7 @@ composeBom = "2025.03.00"
 room = "2.6.1"
 ksp = "2.1.10-1.0.31"
 roomRuntimeAndroid = "2.7.0-rc02"
+coreSplashscreen = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +38,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
