@@ -12,9 +12,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.core.util.isNotEmpty
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 class DeviceScanner(private val context: Context) {
 
@@ -25,19 +23,23 @@ class DeviceScanner(private val context: Context) {
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
     private val bluetoothLeScanner: BluetoothLeScanner? = bluetoothAdapter?.bluetoothLeScanner
+    private var isScanning = false
 
+    /**
+     * @Note Disabled until logic completed for only storing Blackist/Whitelist
     // Initialize Database for persistent device storage
     private val database = AppDatabase.getDatabase(context)
     private val btleDeviceDao = database.btleDeviceDao()
     private val coroutineScope = CoroutineScope(Dispatchers.IO)  // Use IO dispatcher for DB
+*/
 
     init {
         Log.d(tag, "BluetoothAdapter: $bluetoothAdapter")
         Log.d(tag, "BluetoothLeScanner: $bluetoothLeScanner")
+        isScanning = false
     }
 
-    private var isScanning = false
-    private val handler = Handler(Looper.getMainLooper())
+
     private val scanResults = mutableListOf<BtleDevice>() // Changed to BTLEDevice
 
     // Callback interface to notify about scan results
@@ -62,7 +64,7 @@ class DeviceScanner(private val context: Context) {
                         Manifest.permission.BLUETOOTH_CONNECT
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
-                    device.name ?: "Unknown Device (No BT Connect Permission)"
+                    device.name ?: "Unknown Device"
                 } else {
                     "Unknown Device (No BT Connect Permission)"
                 }
@@ -99,7 +101,8 @@ class DeviceScanner(private val context: Context) {
                 timeStamp = System.currentTimeMillis(),
                 nickName = deviceName
             )
-
+/**
+ * @Note: This is commented out until logic implemented to store Only Blacklist/Whitelist data persistently.
             CoroutineScope(Dispatchers.IO).launch {
                 // Safely create deviceEntity
                 if (btleDevice.deviceAddress != null && btleDevice.signalStrength != null) {
@@ -124,7 +127,10 @@ class DeviceScanner(private val context: Context) {
                     // Handle the case where deviceAddress or signalStrength is null
                     // You might want to log this, or skip saving the device to the database
                 }
-            }
+            }// End of CoRoutine
+            */ //End of commented out code.
+
+
             // Update the scanResults list
             if (existingDeviceIndex == -1) {
                 // Device is new, add it to the list
@@ -139,7 +145,7 @@ class DeviceScanner(private val context: Context) {
         override fun onScanFailed(errorCode: Int) {
             Log.e(tag, "Scan failed with error: $errorCode")
         }
-    }
+    }// End of leScanCallback
 
     /**
      * This function contains the core logic for calling system method to start BT Scan.
@@ -159,15 +165,19 @@ class DeviceScanner(private val context: Context) {
         bluetoothLeScanner?.startScan(leScanCallback)
 
         // Stop scanning after a defined period
-        handler.postDelayed({
-            stopScanning()
-        }, 10000)
-    }
+       // handler.postDelayed({stopScanning()}, 60000)
+
+    } // End of startScanning() function
 
     fun stopScanning() {
         tag = "DeviceScanner.stopScanning()"
         Log.d(tag, "stopScanning called")
         if (!isScanning) return
+        isScanning = false
         bluetoothLeScanner?.stopScan(leScanCallback)
+    }// End of stopScanning()
+
+    fun getScanState():Boolean{
+        return isScanning
     }
-}
+} // End of DeviceScanner Class
