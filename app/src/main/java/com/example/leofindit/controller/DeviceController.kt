@@ -10,8 +10,8 @@ import androidx.compose.runtime.setValue
 
 class DeviceController(
     private val deviceScanner: DeviceScanner,
-    private val permissionHandler: LEOPermissionHandler
-) : LEOPermissionHandler.PermissionCallback {
+    private val permissionHandler: LeoPermissionHandler
+) : LeoPermissionHandler.PermissionCallback {
 
     internal var isScanning by mutableStateOf(false)
     private var tag: String = "DeviceController"

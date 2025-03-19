@@ -2,6 +2,7 @@
 
 package com.example.leofindit
 
+import DeviceDetailCard
 import android.app.AlertDialog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.leofindit.controller.DeviceController
-import com.example.leofindit.controller.LEOPermissionHandler
+import com.example.leofindit.controller.LeoPermissionHandler
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.model.DeviceScanner
 import com.example.leofindit.ui.theme.*
@@ -29,20 +30,20 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.*
 
 
 const val BLUETOOTH_PERMISSIONS_REQUEST_CODE = 101
 
 class MainActivity : ComponentActivity() {
 
-    internal lateinit var deviceScanner: DeviceScanner
-    private lateinit var permissionHandler: LEOPermissionHandler
+    private lateinit var deviceScanner: DeviceScanner
+    private lateinit var permissionHandler: LeoPermissionHandler
     private lateinit var deviceController: DeviceController
     private val scannedDevices = mutableStateListOf<BtleDevice>()
     private var tag = "MainActivity"
 
-    // Declare Activity Result Launcher
+    // Declare Activity Result Launcher-> Needed for maintaining Bluetooth permissions.
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +51,7 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         deviceScanner = DeviceScanner(this)
-        permissionHandler = LEOPermissionHandler()
+        permissionHandler = LeoPermissionHandler()
         deviceController = DeviceController(deviceScanner, permissionHandler)
 
         // Initialize Activity Result Launcher
@@ -58,39 +59,76 @@ class MainActivity : ComponentActivity() {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                 if (permissions.all { it.value }) {
                     Log.d(tag, "requestPermissionLauncher all permissions granted.")
-                    // Call onPermissionsGranted here:
                     deviceController.onPermissionsGranted()
                 } else {
+                    Log.w(tag,"User denied permissions, retrying permissions request.")
                     deviceController.onPermissionsDenied()
                     showPermissionDeniedDialog()
                 }
             }
 
         setContent {
-            Leo_findit_aosTheme { // Apply your theme here
+            Leo_findit_aosTheme { // This is the Compose theme.
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Background), // Set background color here (or use your theme color)
+                        .background(Background),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     appTopBar()
-                    deviceListView(scannedDevices)
+
+                    // State to control showing the detail card
+                    var selectedDevice by remember { mutableStateOf<BtleDevice?>(null) }
+
+                    if (selectedDevice == null) {
+                        deviceListView(
+                            devices = scannedDevices,
+                            onDeviceClick = { clickedDevice ->
+                                selectedDevice = clickedDevice // Update state on click
+                                Log.d("MainActivity", "Clicked on: ${clickedDevice.deviceName}")
+                            }
+                        )
+                    } else {
+                        DeviceDetailCard(
+                            device = selectedDevice!!,
+                            onSafeClick = { device ->
+                                device.markSafe()
+                            },
+                            onSuspiciousClick = { device ->
+                                device.markSuspicious()
+                            },
+                            onTargetClick = { device ->
+                                device.isTarget = !device.isTarget
+                            },
+                            onNicknameChange = { newNickname ->
+                                selectedDevice!!.setNickName(newNickname)
+                            }
+                        ) {
+                            selectedDevice = null // Callback to close the detail card
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
                     scanButton(
-                        scanning = deviceController.isScanning, // Pass the scanning state
-                        onScanToggle = { deviceController.toggleScanning(this@MainActivity, requestPermissionLauncher) }  // Pass the toggle function
+                        scanning = deviceController.isScanning, // Pass scanning state (change button "scan" <-> "stop"
+                        onScanToggle = {
+                            deviceController.toggleScanning(
+                                this@MainActivity,
+                                requestPermissionLauncher
+                            )
+                        }  // Toggles Scan on button press.
                     )
                 }
             }
-
         }
 
+
         deviceScanner.setScanCallback(object : DeviceScanner.ScanCallback {
+            var tag = "MainActivity.deviceScanner.setcallback()"
             override fun onScanResult(devices: List<BtleDevice>) {
                 scannedDevices.clear()
                 scannedDevices.addAll(devices)
-                println("Number of scanned devices: ${scannedDevices.size}")
+                Log.d( tag,"Scanned ${scannedDevices.size} devices.")
             }
         })
 
@@ -102,11 +140,7 @@ class MainActivity : ComponentActivity() {
     }
 
     /** This calls a Dialog box that double-checks that the user wants to deny bluetooth permissions.
-     *
-     *
      * @return Nothing
-     *
-     *
      */
     private fun showPermissionDeniedDialog() {
         tag = "MainActivity.showPermissionDeniedDialog()"

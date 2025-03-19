@@ -40,11 +40,11 @@ class DeviceScanner(private val context: Context) {
     }
 
 
-    private val scanResults = mutableListOf<BtleDevice>() // Changed to BTLEDevice
+    private val scanResults = mutableListOf<BtleDevice>()
 
     // Callback interface to notify about scan results
     interface ScanCallback {
-        fun onScanResult(devices: List<BtleDevice>) // Changed to BTLEDevice
+        fun onScanResult(devices: List<BtleDevice>)
     }
 
     private var scanCallback: ScanCallback? = null
@@ -57,6 +57,8 @@ class DeviceScanner(private val context: Context) {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             val device = result.device
             val rssi = result.rssi
+            val scanRecord = result.scanRecord
+
 
             val deviceName =
                 if (ContextCompat.checkSelfPermission(
@@ -71,8 +73,15 @@ class DeviceScanner(private val context: Context) {
 
             val deviceAddress = device.address ?: "Unknown" // Get the MAC address
 
-            // Get manufacturer-specific data
-            val manufacturerData = result.scanRecord?.getManufacturerSpecificData()
+            // Extract UUIDs from ScanRecord
+            val uuids: MutableList<String> = mutableListOf()
+            scanRecord?.serviceUuids?.forEach { uuid ->
+                uuids.add(uuid.toString())
+            }
+            val uuidString = uuids.joinToString(", ")
+
+            val deviceType = "Generic BLE Device" // Replace with logic to determine device type
+            val manufacturerData = scanRecord?.manufacturerSpecificData
             val manufacturer = if (manufacturerData != null && manufacturerData.isNotEmpty()) {
                 // Assuming you want the first manufacturer ID's data
                 val manufacturerId = manufacturerData.keyAt(0)
@@ -87,8 +96,8 @@ class DeviceScanner(private val context: Context) {
             val existingDeviceIndex =
                 scanResults.indexOfFirst { it.deviceAddress == deviceAddress }
 
-            val btleDevice = BtleDevice( // Changed to BTLEDevice
-                deviceType = "Tag",
+            val btleDevice = BtleDevice(
+                deviceType = deviceType,
                 deviceManufacturer = manufacturer,
                 deviceName = deviceName,
                 deviceAddress = deviceAddress,
@@ -99,7 +108,8 @@ class DeviceScanner(private val context: Context) {
                 isSuspicious = false,
                 isTag = false,
                 timeStamp = System.currentTimeMillis(),
-                nickName = deviceName
+                nickName = deviceName,
+                deviceUuid = uuidString // Store UUIDs as a comma-separated string
             )
 /**
  * @Note: This is commented out until logic implemented to store Only Blacklist/Whitelist data persistently.

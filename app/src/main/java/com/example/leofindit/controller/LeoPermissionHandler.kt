@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import com.example.leofindit.BLUETOOTH_PERMISSIONS_REQUEST_CODE
 
 // Class to specifically handle checking and requesting required permissions.
-class LEOPermissionHandler {
+class LeoPermissionHandler {
     // for Logging Purposes
     private var tag = "LEOPermissionHandler"
     private val requestCode = BLUETOOTH_PERMISSIONS_REQUEST_CODE
