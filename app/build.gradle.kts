@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.leo_findit_aos"
-    compileSdk = 34 // This is Android 14 **NOTE: Google Play Store requires Target Android 13+
+    namespace = "com.example.leofindit"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.leo_findit_aos"
+        applicationId = "com.example.leofindit"
         minSdk = 31
         targetSdk = 34
         versionCode = 1

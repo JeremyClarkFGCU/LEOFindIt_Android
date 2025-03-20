@@ -87,6 +87,7 @@ class MainActivity : ComponentActivity() {
     // Declare Activity Result Launcher
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         tag = "MainActivity.onCreate()"
         val splashScreen = installSplashScreen()
@@ -194,8 +195,6 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         deviceScanner.stopScanning()
-    }
-
     }
 }
 @Composable
