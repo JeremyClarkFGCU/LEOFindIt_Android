@@ -1,7 +1,10 @@
+// MainActivity.kt
+
 package com.example.leofindit
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +19,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.content.edit
 import androidx.navigation.NavHostController
@@ -39,14 +45,55 @@ import com.example.leofindit.composables.trackerDetails.TrackerDetails
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.flow.map
+import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.leofindit.controller.DeviceController
+import com.example.leofindit.controller.LEOPermissionHandler
+import com.example.leofindit.model.BtleDevice
+import com.example.leofindit.model.DeviceScanner
+import com.example.leofindit.ui.theme.*
+import com.example.leofindit.view.scanButton
+import com.example.leofindit.view.deviceListView
+import com.example.leofindit.view.appTopBar
+import android.util.Log
+import android.content.Intent
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.mutableStateListOf
+import kotlin.collections.addAll
+import kotlin.text.clear
+
+
+const val BLUETOOTH_PERMISSIONS_REQUEST_CODE = 101
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @OptIn(ExperimentalPermissionsApi::class)
     @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+
+    internal lateinit var deviceScanner: DeviceScanner
+    private lateinit var permissionHandler: LEOPermissionHandler
+    private lateinit var deviceController: DeviceController
+    private val scannedDevices = mutableStateListOf<BtleDevice>()
+    private var tag = "MainActivity"
+
+    // Declare Activity Result Launcher
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        tag = "MainActivity.onCreate()"
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        deviceScanner = DeviceScanner(this)
+        permissionHandler = LEOPermissionHandler()
+        deviceController = DeviceController(deviceScanner, permissionHandler)
         enableEdgeToEdge()
         setContent {
             LeoFindItTheme {
@@ -131,7 +178,24 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+
         }
+
+        deviceScanner.setScanCallback(object : DeviceScanner.ScanCallback {
+            override fun onScanResult(devices: List<BtleDevice>) {
+                scannedDevices.clear()
+                scannedDevices.addAll(devices)
+                println("Number of scanned devices: ${scannedDevices.size}")
+            }
+        })
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        deviceScanner.stopScanning()
+    }
+
     }
 }
 @Composable
@@ -161,6 +225,8 @@ fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) 
         }
     }
 }
+
+
 
 @Composable
 @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)

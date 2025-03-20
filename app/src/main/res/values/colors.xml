@@ -10,4 +10,13 @@
     <color name="apple_blue_light">#007AFF</color>
     <color name="apple_blue_dark">#0A84FF</color>
     <color name="Orange">#FF9900</color>
+    <color name="GoldPrimary">#FFECC06C</color>
+    <color name="GoldPrimaryDull">#FFFFE3B4</color>
+    <color name="InversePrimary">#FF392700</color>
+    <color name="Background">#FF17130B</color>
+    <color name="OnBackground">#FFEBE1D4</color>
+    <color name="OnPrimary">#FF412D00</color>
+    <color name="Surface">#FF4C4639</color>
+    <color name="OnSurface">#FFCFC5B4</color>
+
 </resources>
