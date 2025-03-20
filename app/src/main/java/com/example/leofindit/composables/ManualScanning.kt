@@ -5,6 +5,8 @@
 //  Created by Brian Zapata Resendiz
 package com.example.leofindit.composables
 
+import android.Manifest
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,17 +26,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.leofindit.BtHelper
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 // change text in 6 seconds
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ManualScanning(navController : NavController? = null, innerPadding: PaddingValues = PaddingValues(0.dp)) {
     //Home page
-    val isBluetoothOff by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val permissionsState = BtHelper.rememberPermissions()
+    val isBluetoothOn = BtHelper.scanPreCheck(permissionsState)
+
     val numberOfTrackers = 0
     var isScanning by remember { mutableStateOf(true) }
     LazyColumn(
@@ -55,8 +65,8 @@ fun ManualScanning(navController : NavController? = null, innerPadding: PaddingV
                 )
             }
         }
-        if (isBluetoothOff) {
-            item { BluetoothOff() }
+        if (!isBluetoothOn) {
+            item { BluetoothOff(permissionsState) }
         }
         else {
             //if scanning on then show scanning
@@ -74,13 +84,14 @@ fun ManualScanning(navController : NavController? = null, innerPadding: PaddingV
     }
 }
 
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 @Preview
 @Composable
 fun ManualScanningPreview() {
     LeoFindItTheme {
         Surface(modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
-        ) {
+        ){
             ManualScanning()
         }
     }

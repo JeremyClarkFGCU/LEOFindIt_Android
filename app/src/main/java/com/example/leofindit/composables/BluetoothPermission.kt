@@ -4,8 +4,11 @@ import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -46,9 +49,13 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun BluetoothPermission(navController: NavController? = null) {
 
     val permissionsState = BtHelper.rememberPermissions()
-    val requestBluetoothService = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
     val btEnabled by BtHelper.checkingBtEnabledState()
     val context = LocalContext.current
+
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri = Uri.fromParts("package",context.packageName, null )
+        data = uri
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,13 +89,30 @@ fun BluetoothPermission(navController: NavController? = null) {
                         permissionsState.revokedPermissions.map { it.permission }
                     }"
                 )
+//                BtHelper.CheckBt(permissionsState = permissionsState, context =  context) {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                            navController?.navigate("Notification Access")
+//                        }
+//                        else navController?.navigate("Permission Done")
+//                }
+
                 //permission.launchPermissionRequest()
 
                 when {
                     // Request permissions if they aren't granted
                     !permissionsState.allPermissionsGranted -> {
+
                         permissionsState.launchMultiplePermissionRequest()
-                        //permission.launchPermissionRequest()
+                        if (!permissionsState.shouldShowRationale) {
+                            permissionsState.launchMultiplePermissionRequest()
+                        }
+                        else {
+                            Toast.makeText(
+                                context, "Permission denied, please go into settings to enable " +
+                                        "permissions", Toast.LENGTH_LONG
+                            ).show()
+                            context.startActivity(intent)
+                        }
                     }
 
                     // If permissions are granted but Bluetooth is off, request to enable it
@@ -103,7 +127,6 @@ fun BluetoothPermission(navController: NavController? = null) {
                         }
                         else navController?.navigate("Permission Done")
                     }
-
                 }
 
 

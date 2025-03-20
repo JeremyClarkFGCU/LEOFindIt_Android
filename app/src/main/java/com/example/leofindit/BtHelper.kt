@@ -1,18 +1,24 @@
 package com.example.leofindit
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.location.LocationManager
+import android.net.Uri
+import android.provider.Settings
+import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import com.example.leofindit.LocationHelper.isLocationServiceEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -63,6 +69,18 @@ object BtHelper {
             }
         }
     }
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    fun checkingBtPermissionState(permissionsState: MultiplePermissionsState): State<Boolean> {
+        val hasPermissions = remember { mutableStateOf(permissionsState.allPermissionsGranted) }
+
+        LaunchedEffect(permissionsState.revokedPermissions) {
+            hasPermissions.value = permissionsState.allPermissionsGranted
+        }
+
+        return hasPermissions
+    }
+
     fun isBtEnabled() : Boolean {
         return bluetoothAdapter?.isEnabled == true
     }
@@ -74,10 +92,35 @@ object BtHelper {
 
     }
 
+    //function returns true if Both Bluetooth Service and Permissions are granted
+    @Composable
+    @OptIn(ExperimentalPermissionsApi::class)
+    fun scanPreCheck(permissionsState: MultiplePermissionsState) : Boolean {
+        val isBluetoothEnabled by checkingBtEnabledState()
+        val hasPermissions by checkingBtPermissionState(permissionsState)
+        return isBluetoothEnabled && hasPermissions
+    }
+    @OptIn(ExperimentalPermissionsApi::class)
+    @SuppressLint("PermissionLaunchedDuringComposition")
+    fun requestPermission(permissionsState: MultiplePermissionsState, context: Context ) {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            val uri = Uri.fromParts("package",context.packageName, null )
+            data = uri
+        }
+            if (!permissionsState.shouldShowRationale) {
+                permissionsState.launchMultiplePermissionRequest()
+            }
+            else {
+                Toast.makeText(context, "Permission denied, please go into settings to enable " +
+                        "permissions", Toast.LENGTH_LONG).show()
+                context.startActivity(intent)
+            }
+    }
+
+
+
+
     fun getAdapter() : BluetoothAdapter? {
         return bluetoothAdapter
-    }
-    fun request() {
-
     }
 }

@@ -1,6 +1,9 @@
 package com.example.leofindit.composables
-
-import android.util.Log
+import android.app.Activity
+import android.net.Uri
+import android.provider.Settings
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,10 +39,14 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 @OptIn(ExperimentalPermissionsApi::class)
 fun LocationAccess(navController: NavController? = null) {
 
-    val permissionsState = rememberLocationPermissionState()
     val context = LocalContext.current
+    val permissionsState = rememberLocationPermissionState()
     val isLocationOn by checkingLocationEnabledState()
 
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri = Uri.fromParts("package",context.packageName, null )
+        data = uri
+    }
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -67,15 +74,22 @@ fun LocationAccess(navController: NavController? = null) {
         Button(
             onClick = {
                 when {
-                   permissionsState.allPermissionsGranted && LocationHelper.isLocationServiceEnabled() -> {
-                       navController?.navigate("Bluetooth Permission")
-                   }
                     !permissionsState.allPermissionsGranted -> {
-                        permissionsState.launchMultiplePermissionRequest()
+                        if (!permissionsState.shouldShowRationale) {
+                            permissionsState.launchMultiplePermissionRequest()
+                        }
+                        else {
+                            Toast.makeText(context, "Permission denied, please go into settings to enable " +
+                                    "permissions", Toast.LENGTH_LONG).show()
+                            context.startActivity(intent)
+                        }
                     }
                     !isLocationOn -> {
                         LocationHelper.enableLocationService(context)
                     }
+                   permissionsState.allPermissionsGranted && LocationHelper.isLocationServiceEnabled() -> {
+                       navController?.navigate("Bluetooth Permission")
+                   }
                 }
             },
             modifier = Modifier.fillMaxWidth(.75f)
@@ -83,12 +97,10 @@ fun LocationAccess(navController: NavController? = null) {
         ) {
             Text(
                text =  when {
+                    !permissionsState.allPermissionsGranted -> "Request Permission"
+                    !isLocationOn -> "Turn on Location"
                     permissionsState.allPermissionsGranted && LocationHelper.isLocationServiceEnabled() ->
                         "Continue"
-                    !permissionsState.allPermissionsGranted -> "Request Permission"
-
-                    !isLocationOn -> "Turn on Location"
-
                    else -> {"error"}
                }
             )
