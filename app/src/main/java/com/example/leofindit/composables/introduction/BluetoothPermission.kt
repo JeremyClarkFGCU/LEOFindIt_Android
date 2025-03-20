@@ -1,16 +1,13 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.introduction
 
 import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +21,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,12 +36,10 @@ import com.example.leofindit.BtHelper
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
-@androidx.annotation.RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 fun BluetoothPermission(navController: NavController? = null) {
 
     val permissionsState = BtHelper.rememberPermissions()
@@ -158,7 +152,7 @@ fun BluetoothPermission(navController: NavController? = null) {
 
 @Preview
 @Composable
-@androidx.annotation.RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 fun BluetoothPermissionPreview() {
     LeoFindItTheme {
         Surface(

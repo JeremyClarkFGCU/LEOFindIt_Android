@@ -1,8 +1,8 @@
-package com.example.leofindit.composables
-import android.app.Activity
+package com.example.leofindit.composables.introduction
+
+import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

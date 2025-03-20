@@ -6,6 +6,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,7 +19,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun Scanning(numberOfTrackers: Int? = 0) {
     var changeScanText by remember { mutableStateOf(false) }
-    var seconds by remember { mutableStateOf(60) }
+    var seconds by remember { mutableIntStateOf(60) }
     LaunchedEffect(Unit) {
         while (seconds > 0) {
             delay(1000L)

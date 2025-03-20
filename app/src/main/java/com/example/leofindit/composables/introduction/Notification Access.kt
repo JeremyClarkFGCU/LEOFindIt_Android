@@ -1,4 +1,4 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.introduction
 
 import android.Manifest
 import android.os.Build
@@ -30,7 +30,6 @@ import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)

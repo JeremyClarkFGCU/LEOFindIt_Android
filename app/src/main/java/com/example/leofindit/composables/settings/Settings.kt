@@ -1,4 +1,4 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.settings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.leofindit.R
+import com.example.leofindit.composables.RoundedListItem
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
 @Composable

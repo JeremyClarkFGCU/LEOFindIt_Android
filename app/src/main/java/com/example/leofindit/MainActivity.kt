@@ -24,25 +24,27 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.leofindit.composables.AppInfo
-import com.example.leofindit.composables.BluetoothPermission
+import com.example.leofindit.composables.settings.AppInfo
+import com.example.leofindit.composables.introduction.BluetoothPermission
 import com.example.leofindit.composables.BottomBar
-import com.example.leofindit.composables.Introduction
-import com.example.leofindit.composables.LocationAccess
+import com.example.leofindit.composables.introduction.Introduction
+import com.example.leofindit.composables.introduction.LocationAccess
 import com.example.leofindit.composables.ManualScanning
-import com.example.leofindit.composables.NotificationPermission
-import com.example.leofindit.composables.ObserveTracker
-import com.example.leofindit.composables.PermissionsDone
-import com.example.leofindit.composables.PrecisionFinding
-import com.example.leofindit.composables.Settings
-import com.example.leofindit.composables.TrackerDetails
+import com.example.leofindit.composables.introduction.NotificationPermission
+import com.example.leofindit.composables.trackerDetails.ObserveTracker
+import com.example.leofindit.composables.introduction.PermissionsDone
+import com.example.leofindit.composables.trackerDetails.PrecisionFinding
+import com.example.leofindit.composables.settings.Settings
+import com.example.leofindit.composables.trackerDetails.TrackerDetails
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.flow.map
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @OptIn(ExperimentalPermissionsApi::class)
+    @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -114,7 +116,7 @@ class MainActivity : ComponentActivity() {
                         // only shows the bottom bar during the manual scan screen
                         if(currentRoute in showBottomBar) { BottomBar(mainNavController) }
                     },
-                ) { innerPadding ->
+                )  { innerPadding ->
 
                     if (isFirstLaunch) {
                         IntroNavigator(
@@ -132,9 +134,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
 fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) {
     NavHost(
         navController = introNavController,
@@ -147,7 +149,7 @@ fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) 
         composable("Location Permission") {
             LocationAccess(navController = introNavController)
         }
-        composable("Bluetooth Permission") {
+        composable("Bluetooth Permission")  {
             BluetoothPermission(navController = introNavController)
         }
         //Notification permission is not needed for API > 33
@@ -161,12 +163,13 @@ fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) 
 }
 
 @Composable
+@androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
 fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues) {
     NavHost(
         navController = mainNavigator,
         startDestination = "Manual Scan"
     ) {
-        composable("Manual Scan") {
+        composable("Manual Scan")  {
             ManualScanning(navController = mainNavigator, innerPadding = innerPadding)
         }
         composable (

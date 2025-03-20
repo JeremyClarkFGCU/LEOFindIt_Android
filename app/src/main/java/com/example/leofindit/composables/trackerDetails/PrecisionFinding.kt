@@ -1,4 +1,4 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.trackerDetails
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.leofindit.R
+import com.example.leofindit.composables.RoundedListItem
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import kotlin.math.floor
 
@@ -115,13 +116,13 @@ fun PrecisionFinding(navController: NavController? = null) {
                     leadingText = "Play Sound",
                     onClick = {}
 
-                    )
+                )
                 HorizontalDivider(thickness = Dp.Hairline)
                 RoundedListItem(
                     icon = ImageVector.vectorResource(R.drawable.outline_close_24),
                     color = Color.Red,
                     leadingText = "Close and Stop Searching",
-                    onClick = {navController?.popBackStack()}
+                    onClick = { navController?.popBackStack() }
                 )
             }
         }

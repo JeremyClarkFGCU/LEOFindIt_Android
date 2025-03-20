@@ -1,4 +1,4 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.settings
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import androidx.core.net.toUri
+import com.example.leofindit.composables.RoundedListItem
 
 @SuppressLint("QueryPermissionsNeeded")
 @Composable
@@ -44,11 +45,11 @@ fun AppInfo(navController: NavController? = null) {
     val subject = "Feedback; Version 1.0.0"
     val mailIntent = Intent(
         Intent.ACTION_SENDTO,
-        Uri.parse("mailto:$emailAddress?subject=${Uri.encode(subject)}")
+        "mailto:$emailAddress?subject=${Uri.encode(subject)}".toUri()
     )
     val briansGitHub = Intent(Intent.ACTION_VIEW, "https://github.com/BzapataR".toUri())
 
-    Column() {
+    Column {
         Spacer(modifier = Modifier.size(56.dp))
         IconButton(
             onClick = { navController?.popBackStack() }

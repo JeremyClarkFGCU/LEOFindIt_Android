@@ -1,7 +1,6 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.trackerDetails
 
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.leofindit.R
+import com.example.leofindit.composables.RoundedListItem
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
 
@@ -132,7 +132,7 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
             ) {
                 // list of options
                 RoundedListItem(
-                    onClick = {navController?.navigate("Precision Finding")},
+                    onClick = { navController?.navigate("Precision Finding") },
                     color = Color(0xff007aff),
                     icon = ImageVector.vectorResource(R.drawable.outline_explore_24),
                     leadingText = "Locate Tracker", trailingText = "Nearby"
@@ -141,7 +141,7 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
                 HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
 
                 RoundedListItem(
-                    onClick = {navController?.navigate("Observe Tracker")},
+                    onClick = { navController?.navigate("Observe Tracker") },
                     color = colorResource(R.color.purple_200),
                     icon = ImageVector.vectorResource(R.drawable.outline_access_time_24),
                     leadingText = "Observe Tracker", trailingText = "Off"
@@ -182,7 +182,7 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
 //                    leadingText = "Information About Owner",
 //                )
                 RoundedListItem(
-                    onClick = {context.startActivity(webIntent)},
+                    onClick = { context.startActivity(webIntent) },
                     icon = ImageVector.vectorResource(R.drawable.outline_info_24),
                     color = Color.Green,
                     leadingText = "Manufacture's Website",

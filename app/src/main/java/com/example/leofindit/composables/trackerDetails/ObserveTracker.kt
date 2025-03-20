@@ -1,4 +1,4 @@
-package com.example.leofindit.composables
+package com.example.leofindit.composables.trackerDetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
