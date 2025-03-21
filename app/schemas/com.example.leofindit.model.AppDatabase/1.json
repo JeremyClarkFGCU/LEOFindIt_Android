@@ -2,15 +2,33 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "93378d37c4ac6e778681b685225e0d4f",
+    "identityHash": "38741fe67b3542c955d6a275a197d1be",
     "entities": [
       {
         "tableName": "btle_devices",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceAddress` TEXT NOT NULL, `deviceManufacturer` TEXT NOT NULL, `deviceType` TEXT NOT NULL, `signalStrength` INTEGER NOT NULL, `isSafe` INTEGER NOT NULL, `isSuspicious` INTEGER NOT NULL, PRIMARY KEY(`deviceAddress`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceAddress` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `deviceUUID` TEXT NOT NULL, `deviceNickname` TEXT NOT NULL, `deviceManufacturer` TEXT NOT NULL, `deviceType` TEXT NOT NULL, `signalStrength` INTEGER NOT NULL, `isSafe` INTEGER NOT NULL, `isSuspicious` INTEGER NOT NULL, `isTarget` INTEGER NOT NULL, PRIMARY KEY(`deviceAddress`))",
         "fields": [
           {
             "fieldPath": "deviceAddress",
             "columnName": "deviceAddress",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceName",
+            "columnName": "deviceName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceUUID",
+            "columnName": "deviceUUID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceNickname",
+            "columnName": "deviceNickname",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -43,6 +61,12 @@
             "columnName": "isSuspicious",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isTarget",
+            "columnName": "isTarget",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -58,7 +82,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93378d37c4ac6e778681b685225e0d4f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '38741fe67b3542c955d6a275a197d1be')"
     ]
   }
 }

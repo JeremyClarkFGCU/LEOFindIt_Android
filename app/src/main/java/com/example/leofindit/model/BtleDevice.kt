@@ -34,6 +34,9 @@ data class BtleDevice(
     fun getIsSafe(): Boolean {
         return isSafe
     }
+    fun getIsTarget(): Boolean {
+        return isTarget
+    }
 
     fun setNickName(newNickName: String){
         var oldNickName = getNickName()

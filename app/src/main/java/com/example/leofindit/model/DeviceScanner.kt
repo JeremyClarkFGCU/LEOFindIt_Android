@@ -12,7 +12,9 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.core.util.isNotEmpty
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DeviceScanner(private val context: Context) {
 
@@ -25,13 +27,12 @@ class DeviceScanner(private val context: Context) {
     private val bluetoothLeScanner: BluetoothLeScanner? = bluetoothAdapter?.bluetoothLeScanner
     private var isScanning = false
 
-    /**
-     * @Note Disabled until logic completed for only storing Blackist/Whitelist
+
     // Initialize Database for persistent device storage
     private val database = AppDatabase.getDatabase(context)
     private val btleDeviceDao = database.btleDeviceDao()
     private val coroutineScope = CoroutineScope(Dispatchers.IO)  // Use IO dispatcher for DB
-*/
+
 
     init {
         Log.d(tag, "BluetoothAdapter: $bluetoothAdapter")
@@ -111,18 +112,21 @@ class DeviceScanner(private val context: Context) {
                 nickName = deviceName,
                 deviceUuid = uuidString // Store UUIDs as a comma-separated string
             )
-/**
- * @Note: This is commented out until logic implemented to store Only Blacklist/Whitelist data persistently.
+
             CoroutineScope(Dispatchers.IO).launch {
                 // Safely create deviceEntity
                 if (btleDevice.deviceAddress != null && btleDevice.signalStrength != null) {
                     val deviceEntity = BTLEDeviceEntity(
+                        deviceName = btleDevice.deviceName,
+                        deviceNickname = btleDevice.deviceName, // Assg default name as nickname for init.
+                        deviceUUID = btleDevice.deviceUuid,     // RENAME this param for consistency!!!
                         deviceAddress = btleDevice.deviceAddress,
                         deviceManufacturer = btleDevice.deviceManufacturer,
                         deviceType = btleDevice.deviceType,
                         signalStrength = btleDevice.signalStrength,
                         isSafe = btleDevice.getIsSafe(),
-                        isSuspicious = btleDevice.getIsSuspicious()
+                        isSuspicious = btleDevice.getIsSuspicious(),
+                        isTarget = btleDevice.getIsTarget()
                     )
 
                     val existingDevice =
@@ -138,7 +142,6 @@ class DeviceScanner(private val context: Context) {
                     // You might want to log this, or skip saving the device to the database
                 }
             }// End of CoRoutine
-            */ //End of commented out code.
 
 
             // Update the scanResults list

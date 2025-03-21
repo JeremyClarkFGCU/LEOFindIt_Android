@@ -34,7 +34,8 @@ fun deviceListView(devices: List<BtleDevice>,
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // Take up remaining space
+                .heightIn(max = 600.dp) // Shitty fix for overscan on my phone obscuring scan button
+                // .weight(1f) // Take up remaining space
                 .clip(RoundedCornerShape(0.dp)), // Rounded corners
             colors = CardDefaults.cardColors(containerColor = OnBackground) // Light beige color
         ) {

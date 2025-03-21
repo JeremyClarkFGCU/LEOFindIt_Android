@@ -107,7 +107,7 @@ fun DeviceDetailCard(
                     Text(text = "Device Name: ${device.deviceName}", color = OnSurface)
                     Text(text = "Manufacturer: ${device.deviceManufacturer}", color = OnSurface)
                     Text(text = "ProductID: TBD", color = OnSurface) // Replace "TBD" with actual data if available
-                    Text(text = "UUID: TBD", color = OnSurface) // Replace "TBD" with actual data if available
+                    Text(text = "UUID: ${device.deviceUuid}", color = OnSurface) // Replace "TBD" with actual data if available
                     Text(text = "Address: ${device.deviceAddress}", color = OnSurface)
                     Text(text = "Device Type: ${device.deviceType}", color = OnSurface)
                 }
