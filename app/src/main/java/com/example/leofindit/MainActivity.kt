@@ -2,92 +2,89 @@
 
 package com.example.leofindit
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
-import android.app.AlertDialog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.leofindit.composables.settings.AppInfo
-import com.example.leofindit.composables.introduction.BluetoothPermission
 import com.example.leofindit.composables.BottomBar
+import com.example.leofindit.composables.ManualScanning
+import com.example.leofindit.composables.introduction.BluetoothPermission
 import com.example.leofindit.composables.introduction.Introduction
 import com.example.leofindit.composables.introduction.LocationAccess
-import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.introduction.NotificationPermission
-import com.example.leofindit.composables.trackerDetails.ObserveTracker
 import com.example.leofindit.composables.introduction.PermissionsDone
-import com.example.leofindit.composables.trackerDetails.PrecisionFinding
+import com.example.leofindit.composables.settings.AppInfo
 import com.example.leofindit.composables.settings.Settings
+import com.example.leofindit.composables.trackerDetails.ObserveTracker
+import com.example.leofindit.composables.trackerDetails.PrecisionFinding
 import com.example.leofindit.composables.trackerDetails.TrackerDetails
-import com.example.leofindit.ui.theme.LeoFindItTheme
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import kotlinx.coroutines.flow.map
-import androidx.compose.ui.unit.dp
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.leofindit.controller.DeviceController
 import com.example.leofindit.controller.LEOPermissionHandler
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.model.DeviceScanner
-import com.example.leofindit.ui.theme.*
-import com.example.leofindit.view.scanButton
-import com.example.leofindit.view.deviceListView
-import com.example.leofindit.view.appTopBar
-import android.util.Log
-import android.content.Intent
-import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.mutableStateListOf
-import kotlin.collections.addAll
-import kotlin.text.clear
+import com.example.leofindit.ui.theme.Background
+import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.viewModels.BtleViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import kotlinx.coroutines.flow.map
 
 
 const val BLUETOOTH_PERMISSIONS_REQUEST_CODE = 101
-
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalPermissionsApi::class)
+
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @OptIn(ExperimentalPermissionsApi::class)
-    @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
 
     internal lateinit var deviceScanner: DeviceScanner
     private lateinit var permissionHandler: LEOPermissionHandler
     private lateinit var deviceController: DeviceController
     private val scannedDevices = mutableStateListOf<BtleDevice>()
     private var tag = "MainActivity"
+    private val btleViewModel: BtleViewModel by viewModels()
 
     // Declare Activity Result Launcher
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @SuppressLint("SupportAnnotationUsage", "MissingPermission")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN,
+        [Manifest.permission.BLUETOOTH_CONNECT]
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         tag = "MainActivity.onCreate()"
         val splashScreen = installSplashScreen()
@@ -158,13 +155,45 @@ class MainActivity : ComponentActivity() {
 
 
                 Scaffold(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize()
+                        .background(Background),
                     topBar = {},
                     bottomBar = {
                         // only shows the bottom bar during the manual scan screen
                         if(currentRoute in showBottomBar) { BottomBar(mainNavController) }
                     },
-                )  { innerPadding ->
+                    floatingActionButton = {
+                        if(currentRoute in showBottomBar) {
+                            val isScanning by btleViewModel.isScanning.collectAsState()
+                            FloatingActionButton(
+                            onClick = {
+                                if (!btleViewModel.isScanning()) {
+                                    btleViewModel.startScanning()
+                                }
+                                else {
+                                    btleViewModel.stopScanning()
+                                }
+                            },
+                            containerColor = Color(0xff2e2921),
+                            modifier = Modifier.offset(y = (48).dp)
+                        ) {
+                            if (!isScanning) {
+                                Icon(
+                                    Icons.Filled.PlayArrow,
+                                    contentDescription = "Play Button",
+                                    tint = Color(0xffe9c16c)
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.baseline_pause_24),
+                                    contentDescription = "Pause Button",
+                                    tint = Color.Unspecified
+                                )
+                            }
+                        }
+                    }
+            },
+                ) { innerPadding ->
 
                     if (isFirstLaunch) {
                         IntroNavigator(
@@ -175,23 +204,34 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     } else {
-                        MainNavigator(mainNavigator = mainNavController, innerPadding = innerPadding)
+                        MainNavigator(
+                            mainNavigator = mainNavController,
+                            innerPadding = innerPadding,
+                            viewModel = btleViewModel
+                        )
                     }
                 }
             }
 
         }
 
-        deviceScanner.setScanCallback(object : DeviceScanner.ScanCallback {
-            override fun onScanResult(devices: List<BtleDevice>) {
+//        deviceScanner.setScanCallback(object : DeviceScanner.ScanCallback {
+//            override fun onScanResult(devices: List<BtleDevice>) {
+//                scannedDevices.clear()
+//                scannedDevices.addAll(devices)
+//                println("Number of scanned devices: ${scannedDevices.size}")
+//            }
+//        })
+        deviceScanner.setScanCallback { devices ->
                 scannedDevices.clear()
                 scannedDevices.addAll(devices)
                 println("Number of scanned devices: ${scannedDevices.size}")
-            }
-        })
+
+        }
 
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun onDestroy() {
         super.onDestroy()
         deviceScanner.stopScanning()
@@ -199,7 +239,7 @@ class MainActivity : ComponentActivity() {
 }
 @Composable
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) {
     NavHost(
         navController = introNavController,
@@ -229,20 +269,19 @@ fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) 
 
 @Composable
 @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues) {
+fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues, viewModel: BtleViewModel) {
     NavHost(
         navController = mainNavigator,
         startDestination = "Manual Scan"
     ) {
         composable("Manual Scan")  {
-            ManualScanning(navController = mainNavigator, innerPadding = innerPadding)
+            ManualScanning(navController = mainNavigator, innerPadding = innerPadding, viewModel = viewModel)
         }
-        composable (
-            route = "Tracker Details/{trackerDetails}",
-            arguments = listOf(navArgument("trackerDetails") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val trackerDetails = backStackEntry.arguments?.getString("trackerDetails")
-            TrackerDetails(navController = mainNavigator, trackerDetails  = trackerDetails)
+        composable ("Tracker Details/{index}", arguments = listOf(navArgument("index") {type =
+            NavType.IntType}))
+        { backStackEntry ->
+            val  index = backStackEntry.arguments!!.getInt("index")
+            TrackerDetails(navController = mainNavigator, viewModel = viewModel, index = index)
         }
         composable("Precision Finding") {
             PrecisionFinding(navController = mainNavigator)

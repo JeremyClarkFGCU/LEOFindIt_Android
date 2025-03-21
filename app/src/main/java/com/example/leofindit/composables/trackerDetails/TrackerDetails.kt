@@ -42,16 +42,18 @@ import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.composables.RoundedListItem
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.viewModels.BtleViewModel
 
 
 @Composable
-fun TrackerDetails(navController: NavController? = null, trackerDetails : String? = null) {
+fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewModel, index: Int) {
     var ignoreTracker by remember { mutableStateOf(false) }
-    val tracker = "Tile"
+   // val trackerName = trackerDetails?.deviceName ?: "Unknown"
     var bluetoothData = null
     var clock: Nothing? = null
     var notCurrentlyReachable: Boolean? = false
     val context = LocalContext.current
+    //todo make a database of manufactures with thier website to remove/disable device
     val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://support.thetileapp.com/hc/en-us/articles/360037001854-Disconnect-a-Partner-Device-from-My-Tile-Account#:~:text=During%20this%20process%2C%20the%20device,back%20to%20your%20Tile%20account."))
 
     Column(
@@ -72,7 +74,7 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = tracker,
+                text = "trackerName",
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -207,7 +209,11 @@ fun TrackerDetails(navController: NavController? = null, trackerDetails : String
 fun TrackerDetailsPreview() {
     LeoFindItTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            TrackerDetails()
+            TrackerDetails(
+                navController = TODO(),
+                viewModel = TODO(),
+                index = 0
+            )
         }
     }
 }

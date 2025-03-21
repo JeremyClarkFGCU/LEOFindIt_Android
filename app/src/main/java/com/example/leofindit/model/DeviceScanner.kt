@@ -10,6 +10,7 @@ import android.os.Looper
 import android.util.Log
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.core.util.isNotEmpty
 
@@ -46,12 +47,16 @@ class DeviceScanner(private val context: Context) {
     interface ScanCallback {
         fun onScanResult(devices: List<BtleDevice>) // Changed to BTLEDevice
     }
+    private var scanCallback: ((List<BtleDevice>) -> Unit)? = null
 
-    private var scanCallback: ScanCallback? = null
-
-    fun setScanCallback(callback: ScanCallback) {
+    fun setScanCallback(callback: (List<BtleDevice>) -> Unit) {
         scanCallback = callback
     }
+//    private var scanCallback: ScanCallback? = null
+//
+//    fun setScanCallback(callback: ScanCallback) {
+//        scanCallback = callback
+//    }
 
     private val leScanCallback = object : android.bluetooth.le.ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -139,7 +144,8 @@ class DeviceScanner(private val context: Context) {
                 // Device exists, update its data (e.g., RSSI)
                 scanResults[existingDeviceIndex] = btleDevice
             }
-            scanCallback?.onScanResult(scanResults)
+            //scanCallback?.onScanResult(scanResults)
+            scanCallback?.invoke((scanResults))
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -150,6 +156,7 @@ class DeviceScanner(private val context: Context) {
     /**
      * This function contains the core logic for calling system method to start BT Scan.
      */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun startScanning() {
         Log.d("DeviceScanner", "startScanning called")
         if (isScanning) return
@@ -169,6 +176,7 @@ class DeviceScanner(private val context: Context) {
 
     } // End of startScanning() function
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun stopScanning() {
         tag = "DeviceScanner.stopScanning()"
         Log.d(tag, "stopScanning called")

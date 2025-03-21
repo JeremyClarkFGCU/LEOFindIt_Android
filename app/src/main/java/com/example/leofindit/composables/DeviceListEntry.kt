@@ -23,12 +23,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.leofindit.R
+import com.example.leofindit.model.BtleDevice
+import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.LeoIcons
 
 //todo pass device object
 //samsung tag for example only
 @Composable
-fun DeviceListEntry(navController: NavController? = null, deviceName: String? = "Samsung Tag") {
+fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, index : Int) {
     Card(
         modifier = Modifier.size(width = 360.dp, height = 40.dp),
 //        colors = CardDefaults.cardColors(
@@ -36,7 +39,7 @@ fun DeviceListEntry(navController: NavController? = null, deviceName: String? = 
 //        ),
         onClick = {
             //navController?.clearBackStack("Tracker Details")
-            navController?.navigate(route ="Tracker Details/")
+            navController?.navigate(route ="Tracker Details/index")
         }
     ) {
         Row(
@@ -52,12 +55,12 @@ fun DeviceListEntry(navController: NavController? = null, deviceName: String? = 
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.samsung_icon),
+                    imageVector = LeoIcons.Bluetooth,
                     contentDescription = "Device Type Icon",
                     tint = Color.Unspecified
                 )
                     Text(
-                        text = "$deviceName",
+                        text = device.deviceName,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.width(192.dp),
                     )
@@ -65,11 +68,16 @@ fun DeviceListEntry(navController: NavController? = null, deviceName: String? = 
             Row {
 
                 // Signal strength icon aligned to the end
+                val signalStrengthIcon = when {
+                    device.signalStrength!! >= -50 -> LeoIcons.SignalStrengthHigh
+                    device.signalStrength >= -70 -> LeoIcons.SignalStrengthMed
+                    else -> LeoIcons.SignalStrengthLow
+                }
+
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.baseline_signal_cellular_alt_24),
+                    imageVector = signalStrengthIcon,
                     contentDescription = "Signal Strength",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(40.dp)
+                    tint = Color.Green // Adjust color as needed
                 )
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -87,7 +95,55 @@ fun DeviceListEntry(navController: NavController? = null, deviceName: String? = 
 fun DeviceDetailEntryPreview() {
     LeoFindItTheme {
         Surface {
-            DeviceListEntry()
+            Card(
+                modifier = Modifier.size(width = 360.dp, height = 40.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = MaterialTheme.colorScheme.onSurface
+//        ),
+                onClick = {
+                }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Left-side content
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = LeoIcons.Bluetooth,
+                            contentDescription = "Device Type Icon",
+                            tint = GoldPrimary
+                        )
+                        Text(
+                            text = "Device Name",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.width(192.dp),
+                        )
+                    }
+                    Row {
+
+                        // Signal strength icon aligned to the end
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.baseline_signal_cellular_alt_24),
+                            contentDescription = "Signal Strength",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Signal Strength",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                }
+            }
+        }
         }
     }
-}

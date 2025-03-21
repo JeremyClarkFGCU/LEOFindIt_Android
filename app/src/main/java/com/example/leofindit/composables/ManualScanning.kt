@@ -6,6 +6,7 @@
 package com.example.leofindit.composables
 
 import android.Manifest
+import android.annotation.SuppressLint
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,10 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,20 +35,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.leofindit.BtHelper
+import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.viewModels.BtleViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 // change text in 6 seconds
+@SuppressLint("StateFlowValueCalledInComposition")
 @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun ManualScanning(navController : NavController? = null, innerPadding: PaddingValues = PaddingValues(0.dp)) {
+fun ManualScanning(
+    navController : NavController? = null,
+    innerPadding: PaddingValues = PaddingValues(0.dp),
+    viewModel: BtleViewModel
+
+) {
     //Home page
-    val context = LocalContext.current
     val permissionsState = BtHelper.rememberPermissions()
     val isBluetoothOn = BtHelper.scanPreCheck(permissionsState)
 
-    val numberOfTrackers = 0
+    val scannedDevices by viewModel.scannedDevices.collectAsState(initial = emptyList())
     var isScanning by remember { mutableStateOf(true) }
     LazyColumn(
         contentPadding = innerPadding ,
@@ -75,10 +85,11 @@ fun ManualScanning(navController : NavController? = null, innerPadding: PaddingV
             }
             //else show list
             else {
-                items(count = 30) {
-                    DeviceListEntry(navController)
+                itemsIndexed(scannedDevices) { index, device ->
+                    DeviceListEntry(navController, device, index)
                     Spacer(modifier = Modifier.size(8.dp))
                 }
+
             }
         }
     }
@@ -92,7 +103,11 @@ fun ManualScanningPreview() {
         Surface(modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ){
-            ManualScanning()
+            ManualScanning(
+                navController = TODO(),
+                innerPadding = TODO(),
+                viewModel = TODO()
+            )
         }
     }
 }
