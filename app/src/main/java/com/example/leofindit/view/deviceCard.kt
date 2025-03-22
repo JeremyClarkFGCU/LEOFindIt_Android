@@ -13,15 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.clip
 import com.example.leofindit.ui.theme.LeoIcons
 import com.example.leofindit.ui.theme.*
-
+import androidx.compose.foundation.clickable // Import clickable Modifier
 
 @Composable
-fun deviceCard(device: BtleDevice) {
+fun deviceCard(device: BtleDevice, onClick: (BtleDevice) -> Unit) { // Add onClick parameter
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clip(RoundedCornerShape(8.dp)),
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick(device) }, // Wrap the Card with clickable
         colors = CardDefaults.cardColors(containerColor = Surface) // Dark Grey for Card Display (DarkMode
     ) {
         Column(
@@ -44,7 +45,7 @@ fun deviceCard(device: BtleDevice) {
 
                 // Right: Device Name
                 Text(
-                    text = device.deviceName,
+                    text = device.getNickName().toString(),
                     fontSize = 20.sp, // Adjust size as needed
                     color = GoldPrimary, // Adjust color as needed
                     modifier = Modifier.weight(1f) // Take up remaining width
@@ -59,7 +60,8 @@ fun deviceCard(device: BtleDevice) {
                 // Left: Device Attributes (Address, RSSI)
                 Column {
                     Text(
-                        text = "Address: ${device.deviceAddress}",
+                        text = "UUID: ${device.deviceUuid}",
+                        fontSize = 10  .sp, // Adjust size as needed
                         color = OnSurface // Lighter color for dark Card BG
                     )
                     Text(

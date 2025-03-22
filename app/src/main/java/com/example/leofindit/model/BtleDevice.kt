@@ -13,12 +13,13 @@ data class BtleDevice(
     var isTarget: Boolean,
     private var isSuspicious: Boolean,
     val isTag: Boolean,
-    private var nickName: String?,
+    private var nickName: String,
     val timeStamp: Long,
+    var deviceUuid: String,
 
 ){
 
-    private var lTag: String? = "BTLEDevice"
+    private var lTag: String = "BTLEDevice"
 
     private fun setIsSuspicious(suspicious: Boolean){
         isSuspicious = suspicious
@@ -41,7 +42,7 @@ data class BtleDevice(
     }
 
     fun getNickName(): String? {
-        val s: String? = nickName
+        val s: String = nickName
         return s
     }
 
@@ -51,10 +52,19 @@ data class BtleDevice(
         Log.i(lTag, "${getNickName()} ($deviceType) marked as safe.")
     }
 
+    fun markUnsafe(){
+        setIsSafe(false)
+        Log.i(lTag, "${getNickName()} ($deviceType) marked as unsafe.")
+    }
+
     fun markSuspicious(){
         setIsSuspicious(true)
         setIsSafe(false)
         Log.i(lTag, "${getNickName()} ($deviceType) marked as suspicous.")
+    }
+    fun markNotSuspicious(){
+        setIsSuspicious(false)
+        Log.i(lTag, "${getNickName()} ($deviceType) marked as not suspicious.")
     }
 
     fun markUnknown(){

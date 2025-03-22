@@ -15,7 +15,14 @@ import com.example.leofindit.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun deviceListView(devices: List<BtleDevice>) {
+        /** This function controls the list container for the detected BTLE Devices in scanner.
+         * @param List <BtleDevice> - Takes the list of detected devices from the controller
+         * @param onDeviceClick is a callback that lets the controller maintain state recognition for opening the
+         * Device Detail cards later.
+         */
+fun deviceListView(devices: List<BtleDevice>,
+                   onDeviceClick: (BtleDevice) -> Unit
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,7 +42,10 @@ fun deviceListView(devices: List<BtleDevice>) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(devices) { device ->
-                    deviceCard(device = device) // Display each device in a card
+                    deviceCard(
+                        device = device,
+                        onClick = { onDeviceClick(device) }
+                    ) // Display each device in a card
                 }
             }
         }

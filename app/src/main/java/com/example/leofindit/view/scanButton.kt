@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.sp
 import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.LeoIcons
 import com.example.leofindit.ui.theme.OnPrimary
-import com.example.leofindit.MainActivity
 
 @Composable
 fun scanButton(
