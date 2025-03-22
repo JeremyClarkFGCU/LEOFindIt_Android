@@ -29,6 +29,7 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
     }
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun startScanning() {
+        Log.i("scanner", "Scan Starting...")
         viewModelScope.launch {
             deviceScanner.startScanning()
         }
@@ -37,9 +38,10 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun stopScanning() {
+        Log.i("scanner", "Scan Stopped.")
         deviceScanner.stopScanning()
         _isScanning.value = false
-        Log.i("tags", "${scannedDevices.value}")
+        Log.i("scanner", "${scannedDevices.value}")
 
     }
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)

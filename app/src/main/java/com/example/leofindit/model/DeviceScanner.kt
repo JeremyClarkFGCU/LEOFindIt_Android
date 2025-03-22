@@ -145,7 +145,7 @@ class DeviceScanner(private val context: Context) {
                 scanResults[existingDeviceIndex] = btleDevice
             }
             //scanCallback?.onScanResult(scanResults)
-            scanCallback?.invoke((scanResults))
+            scanCallback?.invoke((scanResults.toList()))
         }
 
         override fun onScanFailed(errorCode: Int) {
