@@ -39,6 +39,7 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
     fun stopScanning() {
         deviceScanner.stopScanning()
         _isScanning.value = false
+        Log.i("tags", "${scannedDevices.value}")
 
     }
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)

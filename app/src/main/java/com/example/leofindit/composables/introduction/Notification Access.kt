@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,7 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.leofindit.R
+import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.OnSurface
+import com.example.leofindit.ui.theme.Surface
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -50,19 +55,21 @@ fun NotificationPermission(navController: NavController? = null) {
             text = "Notifications Access",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 32.sp
+            fontSize = 32.sp,
+            color = GoldPrimary
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.baseline_notifications_24),
             contentDescription = "Notification Logo",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = GoldPrimaryDull,
             modifier = Modifier.size(100.dp)
         )
         Text(
             text = "To receive a notification if your might have been tracked, you need to " +
                     "enable notifications for Proximity Tracker",
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start= 8.dp, end = 8.dp)
+            modifier = Modifier.padding(start= 8.dp, end = 8.dp),
+            color = GoldPrimary
         )
         Column {
             TextButton (
@@ -71,7 +78,8 @@ fun NotificationPermission(navController: NavController? = null) {
 
             ) {
                 Text(
-                    text = "Skip"
+                    text = "Skip",
+                    color = GoldPrimary
                 )
             }
             Button(
@@ -81,12 +89,14 @@ fun NotificationPermission(navController: NavController? = null) {
                     } else {
                         navController?.navigate("Permission Done")
                     }
+
                 },
+                colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface),
                 modifier = Modifier.fillMaxWidth(.75f)
 
             ) {
                 Text(
-                    text = "Continue"
+                    text = "Continue",
                 )
             }
         }

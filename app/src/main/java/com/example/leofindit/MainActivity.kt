@@ -155,8 +155,8 @@ class MainActivity : ComponentActivity() {
 
 
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                        .background(Background),
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Background,
                     topBar = {},
                     bottomBar = {
                         // only shows the bottom bar during the manual scan screen
@@ -275,7 +275,7 @@ fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues,
         startDestination = "Manual Scan"
     ) {
         composable("Manual Scan")  {
-            ManualScanning(navController = mainNavigator, innerPadding = innerPadding, viewModel = viewModel)
+            ManualScanning(navController = mainNavigator, viewModel = viewModel)
         }
         composable ("Tracker Details/{index}", arguments = listOf(navArgument("index") {type =
             NavType.IntType}))

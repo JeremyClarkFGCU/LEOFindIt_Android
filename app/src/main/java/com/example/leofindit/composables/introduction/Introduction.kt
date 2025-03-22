@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,7 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.leofindit.R
+import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.OnPrimary
+import com.example.leofindit.ui.theme.OnSurface
+import com.example.leofindit.ui.theme.Surface
 
 
 @Composable
@@ -55,13 +61,14 @@ fun Introduction(navController: NavController? = null) {
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 fontSize = 32.sp,
+                color = Surface
             )
             Text(
                 text = "Proximity Tracker",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = primaryColor,
+                color = GoldPrimary,
                 //color = Color(0xff648de2),
                 fontSize = 32.sp,
                 )
@@ -76,17 +83,20 @@ fun Introduction(navController: NavController? = null) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.baseline_search_24),
                     contentDescription = "Manual Scan",
-                    tint = primaryColor,
-                    modifier = Modifier.size(40.dp)
+                    tint = GoldPrimaryDull,
+                    modifier = Modifier.size(40.dp),
                 )
                 Column {
                     Text(
                         text = "Manual Scan",
                         fontWeight = FontWeight.Bold,
+                        color = GoldPrimary,
                     )
                     Text(
+                        color = GoldPrimary,
                         text = "Scan for surrounding AirTags, SmartTags, Tiles and more!",
                         fontWeight = FontWeight.Light
+
                     )
                 }
             }
@@ -99,17 +109,19 @@ fun Introduction(navController: NavController? = null) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.baseline_lock_24),
                     contentDescription = "Manual Scan",
-                    tint = primaryColor,
+                    tint = GoldPrimaryDull,
                     modifier = Modifier.size(40.dp)
                 )
                 Column {
                     Text(
                         text = "We respect your data",
                         fontWeight = FontWeight.Bold,
+                        color = GoldPrimary,
                     )
                     Text(
                         text = "Developed by Florida Gulf Coast University students without commercial interests.",
-                        fontWeight = FontWeight.Light
+                        fontWeight = FontWeight.Light,
+                        color = GoldPrimary,
 
                     )
                 }
@@ -121,8 +133,9 @@ fun Introduction(navController: NavController? = null) {
                 navController?.navigate("Location Permission")
             },
             modifier = Modifier.fillMaxWidth(.75f),
+            colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface)
 
-            )
+        )
         {
             Text("Continue")
         }

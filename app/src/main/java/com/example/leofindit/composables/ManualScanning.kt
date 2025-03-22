@@ -47,7 +47,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 @Composable
 fun ManualScanning(
     navController : NavController? = null,
-    innerPadding: PaddingValues = PaddingValues(0.dp),
     viewModel: BtleViewModel
 
 ) {
@@ -58,7 +57,6 @@ fun ManualScanning(
     val scannedDevices by viewModel.scannedDevices.collectAsState(initial = emptyList())
     var isScanning by remember { mutableStateOf(true) }
     LazyColumn(
-        contentPadding = innerPadding ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxSize()
@@ -105,7 +103,6 @@ fun ManualScanningPreview() {
         ){
             ManualScanning(
                 navController = TODO(),
-                innerPadding = TODO(),
                 viewModel = TODO()
             )
         }

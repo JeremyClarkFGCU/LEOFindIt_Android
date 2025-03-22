@@ -6,6 +6,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +23,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.OnPrimary
+import com.example.leofindit.ui.theme.OnSurface
+import com.example.leofindit.ui.theme.Surface
 
 @Composable
 fun BottomBar(navController: NavController? = null) {
@@ -38,11 +43,23 @@ fun BottomBar(navController: NavController? = null) {
 
     val navBackStackEntry = navController?.currentBackStackEntryAsState()?.value
     val currentDestination = navBackStackEntry?.destination?.route
-    NavigationBar (modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
+    NavigationBar (
+        modifier = Modifier
+            .fillMaxWidth(),
+           // .background(MaterialTheme.colorScheme.background),
+        containerColor = OnPrimary
+
+        ) {
         items.forEachIndexed { index, item->
         NavigationBarItem(
-                icon = {
-                    Icon(
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = Surface,
+                selectedIconColor = OnSurface,
+                unselectedIconColor = OnSurface,
+                selectedTextColor = OnSurface
+            ),
+            icon = {
+                Icon(
                     if (selectedItem == index) selectedIcon[index] else unselectedIcon[index],
                     contentDescription = item
                 )
@@ -52,17 +69,10 @@ fun BottomBar(navController: NavController? = null) {
                     selectedItem = index
                     if(currentDestination != navList[index])
                         navController?.navigate(navList[index])
-                      },
+            },
             selected = selectedItem == index,
             alwaysShowLabel = false
         )
-//            IconButton(onClick = {}) {
-//                Icon(
-//                    imageVector = ImageVector.vectorResource(R.drawable.baseline_settings_24),
-//                    contentDescription = "Settings Icon",
-//                    tint = MaterialTheme.colorScheme.primary,
-//                )
-//            }
         }
     }
 }

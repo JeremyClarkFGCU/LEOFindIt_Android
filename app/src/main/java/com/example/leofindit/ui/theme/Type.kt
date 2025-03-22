@@ -16,9 +16,10 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
 
-    )
-    /* Other default text styles to override
+    ),
+    // Other default text styles to override
     titleLarge = TextStyle(
+        //color = GoldPrimary,
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 22.sp,
@@ -26,11 +27,27 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
     labelSmall = TextStyle(
+        color = GoldPrimary,
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
-    )
-    */
+    ),
+    headlineMedium = TextStyle(
+        color = GoldPrimary,
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 28.sp,
+        lineHeight = 36.sp
+    ),
+    headlineLarge = TextStyle(
+
+        color = GoldPrimary,
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        //fontSize = 57.sp,
+        //lineHeight = 64.sp
+    ),
+
 )

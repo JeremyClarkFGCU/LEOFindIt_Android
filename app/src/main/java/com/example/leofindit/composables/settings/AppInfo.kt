@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +37,7 @@ import com.example.leofindit.R
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import androidx.core.net.toUri
 import com.example.leofindit.composables.RoundedListItem
+import com.example.leofindit.ui.theme.GoldPrimary
 
 @SuppressLint("QueryPermissionsNeeded")
 @Composable
@@ -52,12 +54,13 @@ fun AppInfo(navController: NavController? = null) {
     Column {
         Spacer(modifier = Modifier.size(56.dp))
         IconButton(
+            colors = IconButtonDefaults.iconButtonColors(contentColor = GoldPrimary),
             onClick = { navController?.popBackStack() }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
                 contentDescription = null,
-            )
+                )
         }
         Column(
             modifier = Modifier
@@ -68,11 +71,13 @@ fun AppInfo(navController: NavController? = null) {
 
         ) {
             Text(
+                color = GoldPrimary,
                 text = "Proximity Tracker for Android",
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
             )
             Text(
+                color = GoldPrimary,
                 text = "Version 1.0.0",
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -82,7 +87,6 @@ fun AppInfo(navController: NavController? = null) {
             modifier = Modifier
                 .padding(horizontal = 4.dp)
                 .shadow(elevation = 24.dp),
-            border = BorderStroke(Dp.Hairline, Color.LightGray)
         ) {
             RoundedListItem(
                 onClick = {
@@ -104,7 +108,6 @@ fun AppInfo(navController: NavController? = null) {
             modifier = Modifier
                 .padding(horizontal = 4.dp)
                 .shadow(elevation = 24.dp),
-            border = BorderStroke(Dp.Hairline, Color.LightGray)
         ) {
             RoundedListItem(
                 onClick = { context.startActivity(briansGitHub) },

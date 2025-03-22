@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,7 +35,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.leofindit.BtHelper
 import com.example.leofindit.R
+import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.OnSurface
+import com.example.leofindit.ui.theme.Surface
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @Composable
@@ -60,19 +65,21 @@ fun BluetoothPermission(navController: NavController? = null) {
             text = "Bluetooth Access",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 32.sp
+            fontSize = 32.sp,
+            color = GoldPrimary,
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.baseline_bluetooth_24),
             contentDescription = "Bluetooth Logo",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = GoldPrimaryDull,
             modifier = Modifier.size(100.dp)
         )
         Text(
             text = "Trackers use Bluetooth for communication. Please allow Bluetooth access " +
                     "so Proximity Tracker can detect trackers around you",
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            color = GoldPrimary
         )
         Button(
             onClick = {
@@ -125,6 +132,7 @@ fun BluetoothPermission(navController: NavController? = null) {
 
 
             },
+            colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface),
             modifier = Modifier.fillMaxWidth(0.75f)
         ) {
             Text(
@@ -144,7 +152,8 @@ fun BluetoothPermission(navController: NavController? = null) {
                     }
 
                     else -> {"error"}
-                }
+                },
+                color= GoldPrimary
             )
         }
     }

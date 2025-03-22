@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,7 +33,12 @@ import com.example.leofindit.LocationHelper
 import com.example.leofindit.LocationHelper.checkingLocationEnabledState
 import com.example.leofindit.LocationHelper.rememberLocationPermissionState
 import com.example.leofindit.R
+import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.OnPrimary
+import com.example.leofindit.ui.theme.OnSurface
+import com.example.leofindit.ui.theme.Surface
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @Composable
@@ -56,12 +62,13 @@ fun LocationAccess(navController: NavController? = null) {
             text = "Location Access",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 32.sp
+            fontSize = 32.sp,
+            color = GoldPrimary
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.baseline_location_pin_24),
             contentDescription = "Location Pin",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = GoldPrimaryDull,
             modifier = Modifier.size(100.dp)
         )
         Text(
@@ -69,7 +76,8 @@ fun LocationAccess(navController: NavController? = null) {
                     " you. All location data stays on device. Please tap \"Continue\" and" +
                     " select \"Allow While Using App\". Make sure \"Precise\" is turned on.  ",
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start= 8.dp, end = 8.dp)
+            modifier = Modifier.padding(start= 8.dp, end = 8.dp),
+            color = GoldPrimary
         )
         Button(
             onClick = {
@@ -92,7 +100,9 @@ fun LocationAccess(navController: NavController? = null) {
                    }
                 }
             },
-            modifier = Modifier.fillMaxWidth(.75f)
+            modifier = Modifier.fillMaxWidth(.75f),
+            colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface)
+
 
         ) {
             Text(
