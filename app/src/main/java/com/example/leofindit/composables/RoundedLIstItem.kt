@@ -1,7 +1,6 @@
 package com.example.leofindit.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -21,15 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
 
 @Composable
 fun RoundedListItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    icon: ImageVector,
-    color: Color,
+    icon: ImageVector? = null,
+    color: Color = Color.Unspecified,
     leadingText: String,
     trailingText: String = "",
     trailingIcon: ImageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -48,12 +46,14 @@ fun RoundedListItem(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.background,
-                    modifier = modifier.size(20.dp)
-                )
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.background,
+                        modifier = modifier.size(20.dp)
+                    )
+                }
             }
         },
         headlineContent = { Text(leadingText) },

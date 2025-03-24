@@ -3,7 +3,6 @@ package com.example.leofindit.composables.settings
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,14 +29,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.leofindit.R
-import com.example.leofindit.ui.theme.LeoFindItTheme
-import androidx.core.net.toUri
 import com.example.leofindit.composables.RoundedListItem
 import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.LeoFindItTheme
 
 @SuppressLint("QueryPermissionsNeeded")
 @Composable

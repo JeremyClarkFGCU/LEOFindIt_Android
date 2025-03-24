@@ -31,7 +31,7 @@ import com.example.leofindit.ui.theme.LeoIcons
 //todo pass device object
 //samsung tag for example only
 @Composable
-fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, index : Int) {
+fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, address : String) {
     Card(
         modifier = Modifier.size(width = 360.dp, height = 40.dp),
 //        colors = CardDefaults.cardColors(
@@ -39,7 +39,7 @@ fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, i
 //        ),
         onClick = {
             //navController?.clearBackStack("Tracker Details")
-            navController?.navigate(route ="Tracker Details/index")
+            navController?.navigate(route ="Tracker Details/$address")
         }
     ) {
         Row(
@@ -101,6 +101,7 @@ fun DeviceDetailEntryPreview() {
 //            containerColor = MaterialTheme.colorScheme.onSurface
 //        ),
                 onClick = {
+
                 }
             ) {
                 Row(

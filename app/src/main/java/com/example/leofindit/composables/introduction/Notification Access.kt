@@ -41,7 +41,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NotificationPermission(navController: NavController? = null) {
-    val NotificationPermissionList = rememberPermissionState(
+    val notificationPermissionList = rememberPermissionState(
         permission =
             Manifest.permission.POST_NOTIFICATIONS
     )
@@ -73,7 +73,7 @@ fun NotificationPermission(navController: NavController? = null) {
         )
         Column {
             TextButton (
-                onClick = {},
+                onClick = { navController?.navigate("Permission Done") },
                 modifier = Modifier.fillMaxWidth(.75f)
 
             ) {
@@ -84,8 +84,8 @@ fun NotificationPermission(navController: NavController? = null) {
             }
             Button(
                 onClick = {
-                    if (!NotificationPermissionList.status.isGranted) {
-                        NotificationPermissionList.launchPermissionRequest()
+                    if (!notificationPermissionList.status.isGranted) {
+                        notificationPermissionList.launchPermissionRequest()
                     } else {
                         navController?.navigate("Permission Done")
                     }

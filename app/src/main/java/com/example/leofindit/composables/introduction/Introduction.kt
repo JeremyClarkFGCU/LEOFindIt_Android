@@ -35,7 +35,6 @@ import com.example.leofindit.R
 import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
-import com.example.leofindit.ui.theme.OnPrimary
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
 

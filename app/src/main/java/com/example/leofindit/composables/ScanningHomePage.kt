@@ -1,5 +1,5 @@
 //
-//  ManualScanning.kt
+//  ScanningHomePage.kt
 //  LeoFindIt
 //
 //  Created by Brian Zapata Resendiz
@@ -10,7 +10,6 @@ import android.annotation.SuppressLint
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,13 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.leofindit.BtHelper
-import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.viewModels.BtleViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -84,7 +81,7 @@ fun ManualScanning(
             //else show list
             else {
                 itemsIndexed(scannedDevices) { index, device ->
-                    DeviceListEntry(navController, device, index)
+                    DeviceListEntry(navController, device, device.deviceAddress ?: "No address #$index")
                     Spacer(modifier = Modifier.size(8.dp))
                 }
 
