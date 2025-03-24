@@ -1,15 +1,13 @@
 package com.example.leofindit.model
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanResult
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.core.util.isNotEmpty

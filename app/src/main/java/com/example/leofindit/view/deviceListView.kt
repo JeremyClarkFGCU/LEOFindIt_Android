@@ -13,7 +13,6 @@ import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.ui.theme.*
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun deviceListView(devices: List<BtleDevice>) {
     Column(

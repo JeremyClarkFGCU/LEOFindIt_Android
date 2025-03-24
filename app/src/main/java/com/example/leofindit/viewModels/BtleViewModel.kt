@@ -5,7 +5,6 @@ import android.app.Application
 import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.model.DeviceScanner
@@ -67,4 +66,11 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
             } else device
         }
     }
+
+    //finds device based on device address (~MAC address... not really)
+    fun findDevice(address: String): BtleDevice {
+        return _scannedDevices.value.find { it.deviceAddress == address }
+            ?: throw NoSuchElementException("No device found with address: $address")
+    }
+
 }

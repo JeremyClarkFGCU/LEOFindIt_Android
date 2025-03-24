@@ -26,6 +26,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,22 +38,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.leofindit.ui.theme.LeoFindItTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 //todo pass device class instead of name, uuid, ...etc
-fun DeviceDetails(modifier: Modifier = Modifier, navController: NavController, deviceName:String?, deviceUUID:String?) {
+fun DeviceDetails(modifier: Modifier = Modifier, navController: NavController? =null, deviceName:String?, deviceUUID:String?) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
     val options = listOf("White List", "Black List")
 
     Scaffold(
         modifier = modifier,
-        topBar = { MainTopAppBar(navController) {} },
+        topBar = {
+            if (navController != null) {
+                MainTopAppBar(navController) {}
+            }
+        },
     ) { innerPadding ->
         Column (
             modifier = modifier
@@ -154,3 +161,12 @@ fun DeviceDetails(modifier: Modifier = Modifier, navController: NavController, d
     }
 }
 
+@Preview
+@Composable
+fun DeviceDetailsPreview () {
+    LeoFindItTheme {
+        Surface {
+            DeviceDetails(modifier = Modifier, deviceName = "IDK", deviceUUID = "1111")
+        }
+    }
+}
