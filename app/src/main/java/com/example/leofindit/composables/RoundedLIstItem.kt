@@ -20,6 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.example.leofindit.ui.theme.Background
+import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.GoldPrimaryDull
+import com.example.leofindit.ui.theme.InversePrimary
+import com.example.leofindit.ui.theme.OnPrimary
 import com.example.leofindit.ui.theme.Surface
 
 @Composable
@@ -37,26 +42,26 @@ fun RoundedListItem(
     ListItem(
         colors = ListItemDefaults.colors(containerColor = Surface,),
         leadingContent = {
-            Box(
-                modifier = modifier
-                    .size(24.dp) // Circle size
-                    .background(
-                        color = color,
-                        shape = CircleShape // Circle shape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (icon != null) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.background,
-                        modifier = modifier.size(20.dp)
-                    )
-                }
+            if (icon != null) {
+                Box(
+                    modifier = modifier
+                        .size(24.dp) // Circle size
+                        .background(
+                            color = color,
+                            shape = CircleShape // Circle shape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = Background,
+                            modifier = modifier.size(20.dp)
+                        )
+                    }
             }
         },
-        headlineContent = { Text(leadingText) },
+        headlineContent = { Text(text = leadingText, color = GoldPrimaryDull) },
         trailingContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -67,7 +72,8 @@ fun RoundedListItem(
                     Text(
                         text = trailingText,
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(end = 4.dp)
+                        modifier = Modifier.padding(end = 4.dp),
+                        color = Color.Gray,
                     )
                     Icon(
                         imageVector = trailingIcon,
