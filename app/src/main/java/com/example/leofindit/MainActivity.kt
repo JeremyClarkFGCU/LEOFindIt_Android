@@ -13,7 +13,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -61,14 +60,12 @@ import com.example.leofindit.model.DeviceScanner
 import com.example.leofindit.ui.theme.Background
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.viewModels.BtleViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.flow.map
 
 
 const val BLUETOOTH_PERMISSIONS_REQUEST_CODE = 101
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalPermissionsApi::class)
 
 class MainActivity : ComponentActivity() {
 
@@ -155,8 +152,8 @@ class MainActivity : ComponentActivity() {
 
 
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                        .background(Background),
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Background,
                     topBar = {},
                     bottomBar = {
                         // only shows the bottom bar during the manual scan screen
@@ -268,20 +265,20 @@ fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) 
 
 
 @Composable
-@androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 fun MainNavigator(mainNavigator: NavHostController, innerPadding: PaddingValues, viewModel: BtleViewModel) {
     NavHost(
         navController = mainNavigator,
         startDestination = "Manual Scan"
     ) {
         composable("Manual Scan")  {
-            ManualScanning(navController = mainNavigator, innerPadding = innerPadding, viewModel = viewModel)
+            ManualScanning(navController = mainNavigator, viewModel = viewModel)
         }
-        composable ("Tracker Details/{index}", arguments = listOf(navArgument("index") {type =
-            NavType.IntType}))
+        composable ("Tracker Details/{address}", arguments = listOf(navArgument("address") {type =
+            NavType.StringType}))
         { backStackEntry ->
-            val  index = backStackEntry.arguments!!.getInt("index")
-            TrackerDetails(navController = mainNavigator, viewModel = viewModel, index = index)
+            val  address = backStackEntry.arguments?.getString("address")!!
+            TrackerDetails(navController = mainNavigator, viewModel = viewModel, address = address)
         }
         composable("Precision Finding") {
             PrecisionFinding(navController = mainNavigator)

@@ -80,7 +80,6 @@ object LocationHelper {
         context.startActivity(intent)
     }
 
-    @OptIn(ExperimentalPermissionsApi::class)
     fun locationInit(context : Context) {
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }

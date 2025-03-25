@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,7 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.leofindit.R
+import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.OnSurface
+import com.example.leofindit.ui.theme.Surface
 
 @Composable
 fun PermissionsDone(navController: NavController? = null, onFinish: (() -> Unit)? = null) {
@@ -38,12 +43,13 @@ fun PermissionsDone(navController: NavController? = null, onFinish: (() -> Unit)
             text = "All Done!",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 32.sp
+            fontSize = 32.sp,
+            color = GoldPrimary
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.baseline_check_circle_24),
             contentDescription = "Check Mark",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = GoldPrimaryDull,
             modifier = Modifier.size(100.dp)
         )
         Column {
@@ -52,7 +58,8 @@ fun PermissionsDone(navController: NavController? = null, onFinish: (() -> Unit)
                         "devices. Protection from these trackers is already provided by Apple's" +
                         "pre-installed \"Find My\" app",
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                color = GoldPrimary
             )
             Spacer(Modifier.size(8.dp))
             Text(
@@ -60,7 +67,8 @@ fun PermissionsDone(navController: NavController? = null, onFinish: (() -> Unit)
                         "type. For example, the determination if trackers are separated from " +
                         "their owners is only available for SmartTags.",
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                color = GoldPrimary
             )
         }
         Button(
@@ -69,6 +77,7 @@ fun PermissionsDone(navController: NavController? = null, onFinish: (() -> Unit)
                     onFinish()
                 }
             },
+            colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface),
             modifier = Modifier.fillMaxWidth(.75f)
 
         ) {
