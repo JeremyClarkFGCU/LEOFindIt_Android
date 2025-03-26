@@ -15,7 +15,6 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.FloatingActionButton
@@ -32,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
@@ -41,7 +39,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.leofindit.composables.BottomBar
 import com.example.leofindit.composables.ManualScanning
 import com.example.leofindit.composables.introduction.BluetoothPermission
 import com.example.leofindit.composables.introduction.Introduction
@@ -157,7 +154,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {},
                     bottomBar = {
                         // only shows the bottom bar during the manual scan screen
-                        if(currentRoute in showBottomBar) { BottomBar(mainNavController) }
+                       // if(currentRoute in showBottomBar) { BottomBar(mainNavController) }
                     },
                     floatingActionButton = {
                         if(currentRoute in showBottomBar) {
@@ -172,7 +169,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             containerColor = Color(0xff2e2921),
-                            modifier = Modifier.offset(y = (48).dp)
+                            //modifier = Modifier.offset(y = (48).dp)
                         ) {
                             if (!isScanning) {
                                 Icon(

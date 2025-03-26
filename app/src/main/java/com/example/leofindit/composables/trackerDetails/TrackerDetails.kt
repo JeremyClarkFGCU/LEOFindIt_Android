@@ -3,6 +3,7 @@ package com.example.leofindit.composables.trackerDetails
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -210,20 +211,40 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
                         leadingText = "Device Address",
                         trailingText = device.deviceAddress ?: "Unknown",
                         trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
-                        onClick = {clipboardManager.setText(AnnotatedString(device.deviceAddress.toString()))
+                        onClick = {
+                            clipboardManager.setText(AnnotatedString(device.deviceAddress.toString()))
+                                    Toast.makeText(
+                                        context,
+                                        "Device address copied",
+                                        Toast.LENGTH_SHORT
+                            ).show()
                         }
                     )
                     RoundedListItem(
                         leadingText = "Manufacturer",
                         trailingText = device.deviceManufacturer,
                         trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
-                        onClick = {clipboardManager.setText(AnnotatedString(device.deviceManufacturer.toString())) }
+                        onClick = {
+                            clipboardManager.setText(AnnotatedString(device.deviceManufacturer.toString()))
+                            Toast.makeText(
+                                context,
+                                "Device manufacturer copied",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     )
                     RoundedListItem(
                         leadingText = "Device type",
                         trailingText = device.deviceType,
                         trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
-                        onClick = {clipboardManager.setText(AnnotatedString(device.deviceType.toString()))}
+                        onClick = {
+                            clipboardManager.setText(AnnotatedString(device.deviceType.toString()))
+                            Toast.makeText(
+                                context,
+                                "Device Type copied",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     )
 
                 }
@@ -437,7 +458,7 @@ fun TrackerDetailsPreview() {
                                     count = options.size
                                 ),
                                 onClick = { selectedIndex = if (isSelected) -1 else index
-                                          Log.i("index", "index is: ")},
+                                          Log.i("index", "index is: $selectedIndex")},
                                 selected = index == selectedIndex,
                                 enabled = true,
                                 colors = SegmentedButtonDefaults.colors(
@@ -460,20 +481,40 @@ fun TrackerDetailsPreview() {
                             leadingText = "Device Address",
                             trailingText = device.deviceAddress ?: "Unknown",
                             trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
-                            onClick = {clipboardManager.setText(AnnotatedString(device.deviceAddress.toString()))
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(device.deviceAddress.toString()))
+                                Toast.makeText(
+                                    context,
+                                    "Device address copied",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         )
                         RoundedListItem(
                             leadingText = "Manufacturer",
                             trailingText = device.deviceManufacturer,
                             trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
-                            onClick = {clipboardManager.setText(AnnotatedString(device.deviceManufacturer.toString())) }
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(device.deviceManufacturer.toString()))
+                                Toast.makeText(
+                                    context,
+                                    "Device manufacturer copied",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         )
                         RoundedListItem(
                             leadingText = "Device type",
                             trailingText = device.deviceType,
                             trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
-                            onClick = {clipboardManager.setText(AnnotatedString(device.deviceType.toString()))}
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(device.deviceType.toString()))
+                                Toast.makeText(
+                                    context,
+                                    "Device Type copied",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         )
                     }
                     //map TBA
