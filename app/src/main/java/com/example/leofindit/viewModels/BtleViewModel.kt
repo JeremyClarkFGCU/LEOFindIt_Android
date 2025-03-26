@@ -50,11 +50,15 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
 
     // Update a device state safely using copy()
     fun updateDeviceState(address: String, isSafe: Boolean, isSuspicious: Boolean) {
-        _scannedDevices.value = _scannedDevices.value.map { device ->
-            if (device.deviceAddress == address) {
+        val device: BtleDevice = _scannedDevices.value.find { it.deviceAddress == address }
+            ?: throw NoSuchElementException("No device found with address : $address")
+                when {
+                    isSafe && !isSuspicious -> device.markSafe()
+                    isSuspicious && !isSafe -> device.markSuspicious()
+                    !isSafe && !isSuspicious -> device.markUnknown()
+                }
                 device.copy(isSafe = isSafe, isSuspicious = isSuspicious)
-            } else device
-        }
+        Log.i("Device Call out", "Device: ${device.deviceName}, is suspicious = ${device.getIsSuspicious()}, is safe = ${device.getIsSafe()}")
     }
 
     // Set nickname

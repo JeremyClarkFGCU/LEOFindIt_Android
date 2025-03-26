@@ -1,8 +1,8 @@
 package com.example.leofindit.composables.trackerDetails
 
-import android.app.Application
+import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.compose.foundation.BorderStroke
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,9 +38,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -56,17 +58,27 @@ import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.Purple40
 import com.example.leofindit.viewModels.BtleViewModel
+import java.util.concurrent.TimeUnit
 
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewModel? = null, address : String) {
-    val device =  viewModel?.findDevice(address)
-    val deviceData = device ?: viewModel?.findDevice("defaultAddress")
+    val device =  viewModel!!.findDevice(address)
     var ignoreTracker by remember { mutableStateOf(false) }
    // val trackerName = trackerDetails?.deviceName ?: "Unknown"
+    val timeStamp = device.timeStamp
+
+    val timeDiffMillis = System.currentTimeMillis() - timeStamp
+    val hours = TimeUnit.MILLISECONDS.toHours(timeDiffMillis)
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiffMillis) - TimeUnit.HOURS.toMinutes(hours)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(timeDiffMillis) - TimeUnit.MINUTES.toSeconds(minutes)
+
+    val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
     val notCurrentlyReachable = false
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     //todo make a database of manufactures with their website to remove/disable device
     val webIntent = Intent(Intent.ACTION_VIEW,
         "https://support.thetileapp.com/hc/en-us/articles/360037001854-Disconnect-a-Partner-Device-from-My-Tile-Account#:~:text=During%20this%20process%2C%20the%20device,back%20to%20your%20Tile%20account.".toUri())
@@ -91,7 +103,7 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = device?.deviceName ?: "Unknown Name",
+                    text = device.deviceName,
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
@@ -129,7 +141,7 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
 
                 //Last seen
                 Text(
-                    text = "Last seen: ${System.currentTimeMillis() - device?.timeStamp!!}",
+                    text = "Last seen: $formattedTime",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = GoldPrimaryDull,
@@ -152,7 +164,30 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
                                 index = index,
                                 count = options.size
                             ),
-                            onClick = { selectedIndex = if (isSelected) -1 else index },
+                            onClick = {
+                                selectedIndex =
+                                    if (isSelected) -1
+                                    else index
+                                when (selectedIndex) {
+                                    -1 -> {
+                                        viewModel.updateDeviceState(address, false, false)
+                                        Log.i("Update Device Call", "Index is: $selectedIndex Device set to neutral")
+                                    }
+                                    0 -> {
+                                        viewModel.updateDeviceState(
+                                            address = address,
+                                            isSafe = true,
+                                            isSuspicious = false
+                                        )
+                                        Log.i("Update Device Call", "Index is: $selectedIndex Device set to safe")
+                                    }
+                                    1 -> {
+                                        viewModel.updateDeviceState(address, false, true)
+                                        Log.i("Update Device Call", "Index is: $selectedIndex Device set to suspicious")
+                                    }
+                                }
+                                Log.i("Updated Device Call", "Device: ${device.deviceAddress} is Safe: ${device.getIsSafe()} is suspicious: ${device.getIsSuspicious()}")
+                            },
                             selected = index == selectedIndex,
                             enabled = true,
                             colors = SegmentedButtonDefaults.colors(
@@ -173,15 +208,22 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
                 ) {
                     RoundedListItem(
                         leadingText = "Device Address",
-                        trailingText = device?.deviceAddress ?: "Unknown",
+                        trailingText = device.deviceAddress ?: "Unknown",
+                        trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
+                        onClick = {clipboardManager.setText(AnnotatedString(device.deviceAddress.toString()))
+                        }
                     )
                     RoundedListItem(
                         leadingText = "Manufacturer",
-                        trailingText = device?.deviceManufacturer ?: "Unknown Manufacturer"
+                        trailingText = device.deviceManufacturer,
+                        trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
+                        onClick = {clipboardManager.setText(AnnotatedString(device.deviceManufacturer.toString())) }
                     )
                     RoundedListItem(
                         leadingText = "Device type",
-                        trailingText = device?.deviceType ?: "Unknown",
+                        trailingText = device.deviceType,
+                        trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
+                        onClick = {clipboardManager.setText(AnnotatedString(device.deviceType.toString()))}
                     )
 
                 }
@@ -270,6 +312,7 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
 
 
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -279,7 +322,7 @@ fun TrackerDetailsPreview() {
         deviceManufacturer = "Apple",
         deviceAddress = "000.000.000",
         deviceType = "Headphones",
-        timeStamp = 1221,
+        timeStamp = 0,
         signalStrength = -100,
         isSuspicious = false,
         isTag = false,
@@ -293,8 +336,17 @@ fun TrackerDetailsPreview() {
             val device = sampleBtleDevice
             var ignoreTracker by remember { mutableStateOf(false) }
             // val trackerName = trackerDetails?.deviceName ?: "Unknown"
+            val timeStamp = device.timeStamp
+
+            val timeDiffMillis = System.currentTimeMillis() - timeStamp
+            val hours = TimeUnit.MILLISECONDS.toHours(timeDiffMillis)
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiffMillis) - TimeUnit.HOURS.toMinutes(hours)
+            val seconds = TimeUnit.MILLISECONDS.toSeconds(timeDiffMillis) - TimeUnit.MINUTES.toSeconds(minutes)
+
+            val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
             val notCurrentlyReachable = false
             val context = LocalContext.current
+            val clipboardManager = LocalClipboardManager.current
             //todo make a database of manufactures with their website to remove/disable device
             val webIntent = Intent(
                 Intent.ACTION_VIEW,
@@ -323,7 +375,7 @@ fun TrackerDetailsPreview() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = device?.deviceName ?: "Unknown Name",
+                        text = device.deviceName,
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -361,7 +413,7 @@ fun TrackerDetailsPreview() {
 
                     //Last seen
                     Text(
-                        text = "Last seen: ${System.currentTimeMillis() - device?.timeStamp!!}",
+                        text = "Last seen: ${formattedTime}",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         color = GoldPrimaryDull,
@@ -384,7 +436,8 @@ fun TrackerDetailsPreview() {
                                     index = index,
                                     count = options.size
                                 ),
-                                onClick = { selectedIndex = if (isSelected) -1 else index },
+                                onClick = { selectedIndex = if (isSelected) -1 else index
+                                          Log.i("index", "index is: ")},
                                 selected = index == selectedIndex,
                                 enabled = true,
                                 colors = SegmentedButtonDefaults.colors(
@@ -405,20 +458,23 @@ fun TrackerDetailsPreview() {
                     ) {
                         RoundedListItem(
                             leadingText = "Device Address",
-                            trailingText = device?.deviceAddress ?: "Unknown",
-                            trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24)
+                            trailingText = device.deviceAddress ?: "Unknown",
+                            trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
+                            onClick = {clipboardManager.setText(AnnotatedString(device.deviceAddress.toString()))
+                            }
                         )
                         RoundedListItem(
                             leadingText = "Manufacturer",
-                            trailingText = device?.deviceManufacturer ?: "Unknown Manufacturer",
-                            trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24)
+                            trailingText = device.deviceManufacturer,
+                            trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
+                            onClick = {clipboardManager.setText(AnnotatedString(device.deviceManufacturer.toString())) }
                         )
                         RoundedListItem(
                             leadingText = "Device type",
-                            trailingText = device?.deviceType ?: "Unknown",
-                            trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24)
+                            trailingText = device.deviceType,
+                            trailingIcon = ImageVector.vectorResource(R.drawable.sharp_content_copy_24),
+                            onClick = {clipboardManager.setText(AnnotatedString(device.deviceType.toString()))}
                         )
-
                     }
                     //map TBA
 //            MapView(ignored = ignoreTracker)
