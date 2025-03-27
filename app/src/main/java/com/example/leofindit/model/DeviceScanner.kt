@@ -110,7 +110,12 @@ class DeviceScanner(private val context: Context) {
                 isTag = false,
                 timeStamp = System.currentTimeMillis(),
                 nickName = deviceName,
-                deviceUuid = uuidString // Store UUIDs as a comma-separated string
+                deviceUuid = uuidString, // Store UUIDs as a comma-separated string
+
+                btleDeviceDao = btleDeviceDao,
+                database = database,
+                coroutineScope = coroutineScope
+
             )
 
             CoroutineScope(Dispatchers.IO).launch {

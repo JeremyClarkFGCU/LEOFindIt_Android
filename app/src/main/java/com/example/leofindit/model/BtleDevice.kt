@@ -1,13 +1,18 @@
 package com.example.leofindit.model
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import androidx.room.*
+import kotlinx.coroutines.launch
+
 
 data class BtleDevice(
     val deviceType: String,
     val deviceManufacturer: String,
     val deviceName: String,
-    val deviceAddress: String?,
-    val signalStrength: Int?,
+    val deviceAddress: String,
+    val signalStrength: Int,
     private var isSafe: Boolean,
     val isParent: Boolean,
     var isTarget: Boolean,
@@ -17,6 +22,9 @@ data class BtleDevice(
     val timeStamp: Long,
     var deviceUuid: String,
 
+    val btleDeviceDao: BTLEDeviceDao, // Local scope for interacting with db
+    val database: AppDatabase,
+    val coroutineScope: CoroutineScope
 ){
 
     private var lTag: String = "BTLEDevice"
@@ -52,7 +60,26 @@ data class BtleDevice(
     fun markSafe(){
         setIsSafe(true)
         setIsSuspicious(false)
-        Log.i(lTag, "${getNickName()} ($deviceType) marked as safe.")
+
+        CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
+
+            val deviceEntity = BTLEDeviceEntity(
+                deviceName = this@BtleDevice.deviceName,
+                deviceNickname = this@BtleDevice.deviceName, // Assg default name as nickname for init.
+                deviceUUID = this@BtleDevice.deviceUuid,     // RENAME this param for consistency!!!
+                deviceAddress = this@BtleDevice.deviceAddress,
+                deviceManufacturer = this@BtleDevice.deviceManufacturer,
+                deviceType = this@BtleDevice.deviceType,
+                signalStrength = this@BtleDevice.signalStrength,
+                isSafe = this@BtleDevice.getIsSafe(),
+                isSuspicious = this@BtleDevice.getIsSuspicious(),
+                isTarget = this@BtleDevice.getIsTarget()
+            )
+
+            btleDeviceDao.update(deviceEntity)
+            Log.i(lTag, "${getNickName()} ($deviceType) marked as safe.")
+            Log.d(lTag, "${btleDeviceDao.getAllDevices()}")
+        }
     }
 
     fun markUnsafe(){
@@ -63,7 +90,27 @@ data class BtleDevice(
     fun markSuspicious(){
         setIsSuspicious(true)
         setIsSafe(false)
-        Log.i(lTag, "${getNickName()} ($deviceType) marked as suspicous.")
+
+        CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
+
+            val deviceEntity = BTLEDeviceEntity(
+                deviceName = this@BtleDevice.deviceName,
+                deviceNickname = this@BtleDevice.deviceName, // Assg default name as nickname for init.
+                deviceUUID = this@BtleDevice.deviceUuid,     // RENAME this param for consistency!!!
+                deviceAddress = this@BtleDevice.deviceAddress,
+                deviceManufacturer = this@BtleDevice.deviceManufacturer,
+                deviceType = this@BtleDevice.deviceType,
+                signalStrength = this@BtleDevice.signalStrength,
+                isSafe = this@BtleDevice.getIsSafe(),
+                isSuspicious = this@BtleDevice.getIsSuspicious(),
+                isTarget = this@BtleDevice.getIsTarget()
+            )
+
+            btleDeviceDao.update(deviceEntity)
+            Log.i(lTag, "${getNickName()} ($deviceType) marked as suspicious.")
+            Log.d(lTag, "${btleDeviceDao.getAllDevices()}")
+        }
+
     }
     fun markNotSuspicious(){
         setIsSuspicious(false)
