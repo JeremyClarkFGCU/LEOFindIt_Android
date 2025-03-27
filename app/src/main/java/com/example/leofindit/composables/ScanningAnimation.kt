@@ -37,9 +37,9 @@ fun ScanningAnimation(
         )
     )
 
-    // Colors for the background and radar
-    val primaryColor = Color(0xFF757CE8)
-    val secondaryColor = Color(0xFF002884)
+    // Updated Colors
+    val primaryColor = Color.Black
+    val secondaryColor = Color(0xFFECC06C)
 
     // Background modifier
     val backgroundModifier = if (withBackground) {
@@ -49,7 +49,7 @@ fun ScanningAnimation(
             )
         )
     } else {
-        Modifier // No background when `withBackground` is false
+        Modifier
     }
 
     Box(
@@ -60,33 +60,29 @@ fun ScanningAnimation(
     ) {
         Canvas(
             modifier = Modifier
-                .size((size * 0.8f).dp) // Adjust size to make the circle smaller
+                .size((size * 0.8f).dp)
                 .rotate(rotation)
         ) {
-            // Draw Angular Gradient
+            // Angular Gradient
             val gradientBrush = Brush.sweepGradient(
-                colors = if (withBackground) {
-                    listOf(Color.White.copy(alpha = 0.1f), Color.White)
-                } else {
-                    listOf(Color.White, primaryColor)
-                }
+                colors = listOf(primaryColor, secondaryColor)
             )
             drawCircle(brush = gradientBrush)
 
-            // Draw the smaller circles
-            val smallerSize = size * 0.15f * 0.8f // Adjust for smaller circle size
+            // Smaller circles
+            val smallerSize = size * 0.15f * 0.8f
             val circleStrokeWidth = size * 0.03f
 
             drawCircle(
-                color = Color.White.copy(alpha = 0.4f),
-                radius = size * 0.35f * 0.8f, // Adjust for smaller circle size
+                color = secondaryColor.copy(alpha = 0.4f),
+                radius = size * 0.35f * 0.8f,
                 style = Stroke(width = circleStrokeWidth)
             )
 
-            val whiteBorderSize = smallerSize + size * 0.1f * 0.8f
+            val borderSize = smallerSize + size * 0.1f * 0.8f
             drawCircle(
-                color = Color.White,
-                radius = whiteBorderSize / 2f
+                color = secondaryColor,
+                radius = borderSize / 2f
             )
             drawCircle(
                 color = primaryColor,

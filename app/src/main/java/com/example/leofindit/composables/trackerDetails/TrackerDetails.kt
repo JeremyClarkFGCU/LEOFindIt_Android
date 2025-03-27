@@ -67,22 +67,24 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewModel? = null, address : String) {
     val device =  viewModel!!.findDevice(address)
-    var ignoreTracker by remember { mutableStateOf(false) }
+    var ignoreTracker by remember { mutableStateOf(viewModel.isDeviceMarked(device)) }
    // val trackerName = trackerDetails?.deviceName ?: "Unknown"
-    val timeStamp = device.timeStamp
 
+    val timeStamp = device.timeStamp
     val timeDiffMillis = System.currentTimeMillis() - timeStamp
     val hours = TimeUnit.MILLISECONDS.toHours(timeDiffMillis)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiffMillis) - TimeUnit.HOURS.toMinutes(hours)
     val seconds = TimeUnit.MILLISECONDS.toSeconds(timeDiffMillis) - TimeUnit.MINUTES.toSeconds(minutes)
-
     val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+
     val notCurrentlyReachable = false
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
+
     //todo make a database of manufactures with their website to remove/disable device
     val webIntent = Intent(Intent.ACTION_VIEW,
         "https://support.thetileapp.com/hc/en-us/articles/360037001854-Disconnect-a-Partner-Device-from-My-Tile-Account#:~:text=During%20this%20process%2C%20the%20device,back%20to%20your%20Tile%20account.".toUri())
+    var selectedIndex by remember { mutableIntStateOf(-1) }
 
     LazyColumn (
        // modifier = Modifier.padding(horizontal = 16.dp),
@@ -152,7 +154,6 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
                     modifier = Modifier.width(270.dp).align(Alignment.CenterHorizontally)
                 ) {
                     val options = listOf("White List", "Black List")
-                    var selectedIndex by remember { mutableIntStateOf(-1) }
                     options.forEachIndexed { index, label ->
                         val isSelected = index == selectedIndex
                         val backgroundColor = if (index == 0) Color.LightGray else Color.Black
@@ -172,6 +173,7 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
                                 when (selectedIndex) {
                                     -1 -> {
                                         viewModel.updateDeviceState(address, false, false)
+                                        ignoreTracker = true
                                         Log.i("Update Device Call", "Index is: $selectedIndex Device set to neutral")
                                     }
                                     0 -> {
@@ -263,7 +265,7 @@ fun TrackerDetails(navController: NavController? = null, viewModel: BtleViewMode
                 ) {
                     // list of options
                     RoundedListItem(
-                        onClick = { navController?.navigate("Precision Finding") },
+                        onClick = { navController?.navigate(route = "Precision Finding/${address}") },
                         color = Color(0xff007aff),
                         icon = ImageVector.vectorResource(R.drawable.outline_explore_24),
                         leadingText = "Locate Tracker", trailingText = "Nearby"

@@ -1,6 +1,7 @@
 package com.example.leofindit.viewModels
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.annotation.RequiresPermission
@@ -49,6 +50,7 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Update a device state safely using copy()
+    @SuppressLint("SuspiciousIndentation")
     fun updateDeviceState(address: String, isSafe: Boolean, isSuspicious: Boolean) {
         val device: BtleDevice = _scannedDevices.value.find { it.deviceAddress == address }
             ?: throw NoSuchElementException("No device found with address : $address")
@@ -60,6 +62,11 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
                 device.copy(isSafe = isSafe, isSuspicious = isSuspicious)
         Log.i("Device Call out", "Device: ${device.deviceName}, is suspicious = ${device.getIsSuspicious()}, is safe = ${device.getIsSafe()}")
     }
+
+    fun isDeviceMarked(device: BtleDevice) : Boolean {
+        return(!!device.getIsSuspicious() && !!device.getIsSafe())
+    }
+
 
     // Set nickname
     fun setNickName(address: String, newNickName: String) {

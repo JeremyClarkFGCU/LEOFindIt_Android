@@ -13,6 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import com.example.leofindit.ui.theme.GoldPrimary
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import kotlinx.coroutines.delay
 
 
@@ -52,13 +54,14 @@ fun Scanning(numberOfTrackers: Int? = 0) {
         } else {
             altText
         },
-        style = MaterialTheme.typography.bodySmall
+        style = MaterialTheme.typography.bodySmall,
+        color = GoldPrimary
     )
     TextButton(onClick = {}) {
         Text(
             text = "Older Trackers...",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary
+            color = GoldPrimaryDull
         )
     }
 }

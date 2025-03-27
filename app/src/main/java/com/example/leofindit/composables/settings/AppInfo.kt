@@ -47,7 +47,8 @@ fun AppInfo(navController: NavController? = null) {
         Intent.ACTION_SENDTO,
         "mailto:$emailAddress?subject=${Uri.encode(subject)}".toUri()
     )
-    val briansGitHub = Intent(Intent.ACTION_VIEW, "https://github.com/BzapataR".toUri())
+    val brianGitHub = Intent(Intent.ACTION_VIEW, "https://github.com/BzapataR".toUri())
+    val jeremyGitHub = Intent(Intent.ACTION_VIEW, "https://github.com/JeremyClarkFGCU".toUri())
 
     Column {
         Spacer(modifier = Modifier.size(56.dp))
@@ -108,18 +109,18 @@ fun AppInfo(navController: NavController? = null) {
                 .shadow(elevation = 24.dp),
         ) {
             RoundedListItem(
-                onClick = { context.startActivity(briansGitHub) },
-                icon = ImageVector.vectorResource(R.drawable.outline_data_object_24),
+                onClick = { context.startActivity(brianGitHub) },
+                icon = ImageVector.vectorResource(R.drawable.baseline_brush_24),
                 color = Color.Green,
                 leadingText = "UI Developer", trailingText = "Brian Zapata",
                 trailingIcon = ImageVector.vectorResource(R.drawable.baseline_link_24),
                 iconModifier = Modifier.rotate(-45F)
             )
             RoundedListItem(
-                onClick = { context.startActivity(briansGitHub) },
-                icon = ImageVector.vectorResource(R.drawable.outline_person_24),
+                onClick = { context.startActivity(jeremyGitHub) },
+                icon = ImageVector.vectorResource(R.drawable.outline_data_object_24),
                 color = colorResource(R.color.Orange),
-                leadingText = "Maintainer", trailingText = "John Developer",
+                leadingText = "Bluetooth Backend", trailingText = "Jeremy Clark",
                 trailingIcon = ImageVector.vectorResource(R.drawable.baseline_link_24),
                 iconModifier = Modifier.rotate(-45F)
             )

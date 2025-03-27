@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,8 +26,9 @@ import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.ui.theme.GoldPrimary
-import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoIcons
+import com.example.leofindit.ui.theme.Surface
 
 //todo pass device object
 //samsung tag for example only
@@ -34,9 +36,9 @@ import com.example.leofindit.ui.theme.LeoIcons
 fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, address : String) {
     Card(
         modifier = Modifier.size(width = 360.dp, height = 40.dp),
-//        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.onSurface
-//        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Surface
+        ),
         onClick = {
             //navController?.clearBackStack("Tracker Details")
             navController?.navigate(route ="Tracker Details/$address")
@@ -63,6 +65,7 @@ fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, a
                         text = device.deviceName,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.width(192.dp),
+                        color = GoldPrimaryDull
                     )
             }
             Row {
@@ -82,7 +85,7 @@ fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, a
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "Signal Strength",
-                    tint = Color.Gray,
+                    tint = Color.LightGray,
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -93,13 +96,13 @@ fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, a
 @Preview
 @Composable
 fun DeviceDetailEntryPreview() {
-    LeoFindItTheme {
-        Surface {
+        Surface(color = Surface) {
             Card(
                 modifier = Modifier.size(width = 360.dp, height = 40.dp),
-//        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.onSurface
-//        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Surface
+
+        ),
                 onClick = {
 
                 }
@@ -125,6 +128,7 @@ fun DeviceDetailEntryPreview() {
                             text = "Device Name",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.width(192.dp),
+                            color = GoldPrimaryDull
                         )
                     }
                     Row {
@@ -139,12 +143,11 @@ fun DeviceDetailEntryPreview() {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = "Signal Strength",
-                            tint = Color.Gray,
+                            tint = Color.LightGray,
                             modifier = Modifier.size(40.dp)
                         )
                     }
                 }
             }
-        }
         }
     }

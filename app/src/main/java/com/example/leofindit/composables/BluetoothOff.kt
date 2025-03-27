@@ -25,7 +25,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.leofindit.BtHelper
+import com.example.leofindit.LocationHelper
 import com.example.leofindit.R
 import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.LeoFindItTheme
@@ -33,13 +35,23 @@ import com.example.leofindit.ui.theme.OnPrimary
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
 
 @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun BluetoothOff(permissionsState : MultiplePermissionsState) {
-    val permissionsState = BtHelper.rememberPermissions()
+fun BluetoothOff(navController: NavController? = null) {
+    val btPermissions = BtHelper.rememberPermissions()
+    val locationPermissions = LocationHelper.rememberLocationPermissionState()
+
+    val isBtOn = BtHelper.checkingBtEnabledState()
+    val btPermissionsSet = BtHelper.checkingBtPermissionState(btPermissions)
+    val btSet = isBtOn.value && btPermissionsSet.value
+
+    val isLocationOn = LocationHelper.checkingLocationEnabledState()
+    val locationPermissionsSet = LocationHelper.checkingLocationPermissionState(locationPermissions)
+    val isLocationSet = isLocationOn.value && locationPermissionsSet.value
+
+
     val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -47,31 +59,33 @@ fun BluetoothOff(permissionsState : MultiplePermissionsState) {
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.baseline_warning_24),
-            contentDescription = "Bluetooth Error",
+            contentDescription = "Error",
             tint = OnPrimary,
             modifier = Modifier.size(100.dp)
         )
         Text(
             color = GoldPrimary,
-            text = "Bluetooth is off",
+            text = if (!btSet && !isLocationSet) "Multiple Errors"
+            else if (!btSet) "Bluetooth Errors"
+            else "Location Errors",
             style = MaterialTheme.typography.titleLarge
         )
         Text(
             color = GoldPrimary,
-            text = "Bluetooth must be on to continue",
+            text = "Permissions and Services must be on to continue",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.size(0.dp))
         Row(horizontalArrangement = Arrangement.Center) {
-            if (!BtHelper.checkingBtPermissionState(permissionsState).value) {
+            if (!BtHelper.checkingBtPermissionState(btPermissions).value) {
                 Button(
-                    onClick = { BtHelper.requestPermission(permissionsState, context) },
+                    onClick = { BtHelper.requestPermission(btPermissions, context) },
                     modifier = Modifier.padding(end = 8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = Color.LightGray)
 
                 ) {
                     Text(
-                        text = "Accept Permissions",
+                        text = "Permissions",
                         maxLines = 1
                     )
                 }
@@ -80,19 +94,48 @@ fun BluetoothOff(permissionsState : MultiplePermissionsState) {
 
                 Button(
                     onClick =  { BtHelper.turnOnBtService(context) },
-                    enabled = permissionsState.allPermissionsGranted,
-                    colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface)
+                    enabled = btPermissions.allPermissionsGranted,
+                    colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface, disabledContainerColor = Color.DarkGray, disabledContentColor = Color.LightGray)
 
                 ) {
                     Text(
-                        text = "Turn on Bt Service",
+                        text = "Enable Bluetooth",
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+        Row(horizontalArrangement = Arrangement.Center) {
+            if (!locationPermissionsSet.value) {
+                Button(
+                    onClick = { LocationHelper.requestPermission(locationPermissions, context) },
+                    modifier = Modifier.padding(end = 8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = Color.LightGray)
+
+                ) {
+                    Text(
+                        text = "Set Location Permissions",
+                        maxLines = 1
+                    )
+                }
+            }
+            if (!LocationHelper.checkingLocationEnabledState().value) {
+
+                Button(
+                    onClick =  { LocationHelper.enableLocationService(context) },
+                    enabled = locationPermissions.allPermissionsGranted,
+                    colors = ButtonDefaults.buttonColors(containerColor = Surface, contentColor = OnSurface,disabledContainerColor = Color.DarkGray, disabledContentColor = Color.LightGray)
+
+                ) {
+                    Text(
+                        text = "Enable Location",
                         maxLines = 1
                     )
                 }
             }
         }
         TextButton (
-            onClick = {},
+            onClick = {navController?.navigate("Marked Devices")},
         ) {
             Text (
                 color = OnSurface,
@@ -108,7 +151,7 @@ fun BluetoothOff(permissionsState : MultiplePermissionsState) {
 fun BluetoothOffPreview() {
     LeoFindItTheme {
         Surface (modifier = Modifier.fillMaxSize()) {
-            BluetoothOff(permissionsState = BtHelper.rememberPermissions())
+            BluetoothOff()
         }
     }
 }

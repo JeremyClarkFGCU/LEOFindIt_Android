@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.composables.RoundedListItem
+import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.LeoFindItTheme
 
 @Composable
@@ -35,19 +39,21 @@ fun Settings(navController: NavController? = null) {
     ) {
         item {
             Spacer(modifier = Modifier.size(56.dp))
-//
-//        IconButton(
-//            onClick = { navController?.popBackStack() },
-//            colors = IconButtonDefaults.iconButtonColors(contentColor = GoldPrimary),
-//        ) {
-//            Icon(
-//                imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
-//                contentDescription = "Back Arrow",
-//            )
-//        }
+
 
             // Title and close button row
-            Box(modifier = Modifier.fillMaxWidth().padding(start = 12.dp)) {
+            Box(modifier = Modifier.fillMaxWidth().padding(start = 12.dp), contentAlignment = Alignment.Center) {
+
+                IconButton(
+                    onClick = { navController?.popBackStack() },
+                    colors = IconButtonDefaults.iconButtonColors(contentColor = GoldPrimary),
+                    modifier = Modifier.align(alignment = Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
+                        contentDescription = "Back Arrow",
+                    )
+                }
                 Text(
                     text = "Settings",
                     style = MaterialTheme.typography.headlineMedium,
@@ -68,6 +74,12 @@ fun Settings(navController: NavController? = null) {
                     icon = ImageVector.vectorResource(R.drawable.outline_info_24),
                     color = Color.Green,
                     leadingText = "Information & Contact"
+                )
+                RoundedListItem(
+                    onClick = {navController?.navigate("Marked Devices")},
+                    icon = ImageVector.vectorResource(R.drawable.baseline_list_24) ,
+                    color = Color.Gray,
+                    leadingText = "Marked Device",
                 )
             }
         }
