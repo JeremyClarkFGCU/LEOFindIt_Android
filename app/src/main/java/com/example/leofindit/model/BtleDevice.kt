@@ -3,7 +3,6 @@ package com.example.leofindit.model
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import androidx.room.*
 import kotlinx.coroutines.launch
 
 
@@ -92,7 +91,6 @@ data class BtleDevice(
         setIsSafe(false)
 
         CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
-
             val deviceEntity = BTLEDeviceEntity(
                 deviceName = this@BtleDevice.deviceName,
                 deviceNickname = this@BtleDevice.deviceName, // Assg default name as nickname for init.
@@ -120,7 +118,23 @@ data class BtleDevice(
     fun markUnknown(){
         setIsSuspicious(false)
         setIsSafe(false)
-        Log.i(lTag, "${getNickName()} ($deviceType) marked as unknown.")
+        CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
+            val deviceEntity = BTLEDeviceEntity(
+                deviceName = this@BtleDevice.deviceName,
+                deviceNickname = this@BtleDevice.deviceName, // Assg default name as nickname for init.
+                deviceUUID = this@BtleDevice.deviceUuid,     // RENAME this param for consistency!!!
+                deviceAddress = this@BtleDevice.deviceAddress,
+                deviceManufacturer = this@BtleDevice.deviceManufacturer,
+                deviceType = this@BtleDevice.deviceType,
+                signalStrength = this@BtleDevice.signalStrength,
+                isSafe = this@BtleDevice.getIsSafe(),
+                isSuspicious = this@BtleDevice.getIsSuspicious(),
+                isTarget = this@BtleDevice.getIsTarget()
+            )
+
+            btleDeviceDao.update(deviceEntity)
+            Log.i(lTag, "${getNickName()} ($deviceType) marked as unknown.")
+        }
     }
 
 }
