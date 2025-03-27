@@ -48,7 +48,11 @@ data class BtleDevice(
     fun setNickName(newNickName: String){
         var oldNickName = getNickName()
         nickName = newNickName
-        Log.i(lTag, "User renamed $deviceType: $oldNickName to $newNickName.")
+
+        CoroutineScope(Dispatchers.IO).launch {
+            updateDatabase()
+            Log.i(lTag, "User renamed $deviceType: $oldNickName to $newNickName.")
+        }
     }
 
     fun getNickName(): String? {
@@ -61,21 +65,7 @@ data class BtleDevice(
         setIsSuspicious(false)
 
         CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
-
-            val deviceEntity = BTLEDeviceEntity(
-                deviceName = this@BtleDevice.deviceName,
-                deviceNickname = this@BtleDevice.deviceName, // Assg default name as nickname for init.
-                deviceUUID = this@BtleDevice.deviceUuid,     // RENAME this param for consistency!!!
-                deviceAddress = this@BtleDevice.deviceAddress,
-                deviceManufacturer = this@BtleDevice.deviceManufacturer,
-                deviceType = this@BtleDevice.deviceType,
-                signalStrength = this@BtleDevice.signalStrength,
-                isSafe = this@BtleDevice.getIsSafe(),
-                isSuspicious = this@BtleDevice.getIsSuspicious(),
-                isTarget = this@BtleDevice.getIsTarget()
-            )
-
-            btleDeviceDao.update(deviceEntity)
+            updateDatabase()
             Log.i(lTag, "${getNickName()} ($deviceType) marked as safe.")
             Log.d(lTag, "${btleDeviceDao.getAllDevices()}")
         }
@@ -91,20 +81,7 @@ data class BtleDevice(
         setIsSafe(false)
 
         CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
-            val deviceEntity = BTLEDeviceEntity(
-                deviceName = this@BtleDevice.deviceName,
-                deviceNickname = this@BtleDevice.deviceName, // Assg default name as nickname for init.
-                deviceUUID = this@BtleDevice.deviceUuid,     // RENAME this param for consistency!!!
-                deviceAddress = this@BtleDevice.deviceAddress,
-                deviceManufacturer = this@BtleDevice.deviceManufacturer,
-                deviceType = this@BtleDevice.deviceType,
-                signalStrength = this@BtleDevice.signalStrength,
-                isSafe = this@BtleDevice.getIsSafe(),
-                isSuspicious = this@BtleDevice.getIsSuspicious(),
-                isTarget = this@BtleDevice.getIsTarget()
-            )
-
-            btleDeviceDao.update(deviceEntity)
+            updateDatabase()
             Log.i(lTag, "${getNickName()} ($deviceType) marked as suspicious.")
             Log.d(lTag, "${btleDeviceDao.getAllDevices()}")
         }
@@ -118,23 +95,29 @@ data class BtleDevice(
     fun markUnknown(){
         setIsSuspicious(false)
         setIsSafe(false)
-        CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
-            val deviceEntity = BTLEDeviceEntity(
-                deviceName = this@BtleDevice.deviceName,
-                deviceNickname = this@BtleDevice.deviceName, // Assg default name as nickname for init.
-                deviceUUID = this@BtleDevice.deviceUuid,     // RENAME this param for consistency!!!
-                deviceAddress = this@BtleDevice.deviceAddress,
-                deviceManufacturer = this@BtleDevice.deviceManufacturer,
-                deviceType = this@BtleDevice.deviceType,
-                signalStrength = this@BtleDevice.signalStrength,
-                isSafe = this@BtleDevice.getIsSafe(),
-                isSuspicious = this@BtleDevice.getIsSuspicious(),
-                isTarget = this@BtleDevice.getIsTarget()
-            )
 
-            btleDeviceDao.update(deviceEntity)
+        CoroutineScope(Dispatchers.IO).launch { // Launch coroutine to safely update DB
+            updateDatabase()
             Log.i(lTag, "${getNickName()} ($deviceType) marked as unknown.")
         }
+    }
+
+    suspend fun updateDatabase() {
+        // Create a BTLEDeviceEntity with params from BtleDevice object to call btleDeviceDao update funct.
+        val deviceEntity = BTLEDeviceEntity(
+            deviceName = this@BtleDevice.deviceName,
+            deviceNickname = this@BtleDevice.nickName,
+            deviceUUID = this@BtleDevice.deviceUuid,     // RENAME this param for consistency!!!
+            deviceAddress = this@BtleDevice.deviceAddress,
+            deviceManufacturer = this@BtleDevice.deviceManufacturer,
+            deviceType = this@BtleDevice.deviceType,
+            signalStrength = this@BtleDevice.signalStrength,
+            isSafe = this@BtleDevice.getIsSafe(),
+            isSuspicious = this@BtleDevice.getIsSuspicious(),
+            isTarget = this@BtleDevice.getIsTarget()
+        )
+
+        btleDeviceDao.update(deviceEntity)
     }
 
 }
