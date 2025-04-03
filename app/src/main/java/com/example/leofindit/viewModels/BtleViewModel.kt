@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.model.DeviceScanner
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,9 +18,16 @@ import kotlinx.coroutines.launch
 class BtleViewModel(application: Application) : AndroidViewModel(application) {
     private val _scannedDevices = MutableStateFlow<List<BtleDevice>>(emptyList())
     val scannedDevices: StateFlow<List<BtleDevice>> = _scannedDevices
+
     private val _isScanning = MutableStateFlow(false) // Keep track of scanning state
     val isScanning: StateFlow<Boolean> = _isScanning
+
+    private val _signalStrength = MutableStateFlow<Int?>(null) // Track RSSI values
+    val signalStrength: StateFlow<Int?> = _signalStrength
+
     private val deviceScanner = DeviceScanner(application.applicationContext)
+
+
 
     init {
         // Set callback to receive scan results
@@ -30,13 +38,38 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun startScanning() {
         Log.i("scanner", "Scan Starting...")
+        _isScanning.value = true
         viewModelScope.launch {
             deviceScanner.startScanning()
         }
-        _isScanning.value = true
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
+    fun startScanning(targetAddress: String? = null) {
+        Log.i("scanner", "Scan Starting...")
+        _isScanning.value = true
+
+        viewModelScope.launch {
+            deviceScanner.startScanning()
+            while (_isScanning.value) { // Keep updating while scanning
+                val devices = _scannedDevices.value
+
+                val targetDevice = targetAddress?.let { address ->
+                    devices.find { it.deviceAddress == address }
+                }
+
+                if (targetDevice != null) {
+                    _signalStrength.value = targetDevice.signalStrength ?: -100
+                } else {
+                    _signalStrength.value = null
+                }
+
+                delay(250) // Update every second
+            }
+        }
+    }
+
+        @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun stopScanning() {
         Log.i("scanner", "Scan Stopped.")
         deviceScanner.stopScanning()

@@ -38,6 +38,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.example.leofindit.BtHelper
 import com.example.leofindit.LocationHelper
@@ -60,6 +62,10 @@ fun ManualScanning(
     viewModel: BtleViewModel
 
 ) {
+    // will scan if device is suspended in background code below stops that
+   //BT Scanning Consumes a lot of energy Please check for this
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE){viewModel.stopScanning()}
+
     //Home page
     val btPermissionsState = BtHelper.rememberPermissions()
     val isBluetoothOn = BtHelper.scanPreCheck(btPermissionsState)
