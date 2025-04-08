@@ -1,6 +1,6 @@
 [versions]
-agp = "8.9.1" # This has to remain 8.6.0-alpha07 for the time being.
-gradle = "8.9.1"
+agp = "8.6.1" # This has to remain 8.6.0-alpha07 for the time being.
+gradle = "8.6.1"
 comGoogleDevtoolsKspGradlePlugin = "2.1.10-1.0.31"
 kotlin = "2.1.10"
 coreKtx = "1.15.0"

@@ -157,19 +157,19 @@ fun ManualScanning(
         }
 
 
-
+        // Bt and Permissions check
         if (!isBluetoothOn || !isLocationOn) {
-            item { BluetoothOff(navController) }
+            item { BluetoothOff() }
         }
         else {
             //if scanning on then show scanning
             if (isScanning && scannedDevices.isEmpty()) {
-                item { Scanning() }
+                item { Scanning(numberOfTrackers = scannedDevices.size, navController = navController) }
             }
             //else show list
             else {
                 itemsIndexed(scannedDevices) { index, device ->
-                    DeviceListEntry(navController, device, device.deviceAddress ?: "No address #$index")
+                    DeviceListEntry(navController, device)
                     Spacer(modifier = Modifier.size(8.dp))
                 }
                 item { Spacer(Modifier.height(24.dp)) }

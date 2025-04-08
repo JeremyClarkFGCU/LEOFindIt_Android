@@ -47,6 +47,7 @@ import com.example.leofindit.ui.theme.Surface
 
 @Composable
 fun MarkedDevices(navController: NavController? = null) {
+
     val items = listOf("Black List Devices", "White List Devices")
     var expandedItem by remember { mutableIntStateOf(-1) } // Track which item is expanded
 
@@ -94,7 +95,7 @@ fun MarkedDevices(navController: NavController? = null) {
                     }
                 } else {
                     repeat(10) {
-                        DeviceDetailEntryPreview()
+                        DeviceDetailEntryPreview(navController = navController)
                         //todo: get From WhiteList List data base
                     }
                 }
@@ -115,7 +116,7 @@ fun ExpandableCard(title: String, isExpanded: Boolean, onClick: () -> Unit, cont
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween,) {
+            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
                     text = title,
                     fontSize = 18.sp,

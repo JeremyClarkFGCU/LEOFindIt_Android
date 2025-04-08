@@ -125,13 +125,13 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
                     .shadow(elevation = 24.dp),
                 border = BorderStroke(Dp.Hairline, Color.LightGray)
             ) {
-                RoundedListItem(
-                    icon = ImageVector.vectorResource(R.drawable.baseline_volume_up_24),
-                    color = Color(0xffff9900),
-                    leadingText = "Play Sound",
-                    onClick = {}
-
-                )
+//                RoundedListItem(
+//                    icon = ImageVector.vectorResource(R.drawable.baseline_volume_up_24),
+//                    color = Color(0xffff9900),
+//                    leadingText = "Play Sound",
+//                    onClick = {/*todo add play sound option, will have to be on a per-device instance */}
+//
+//                )
                 HorizontalDivider(thickness = Dp.Hairline)
                 RoundedListItem(
                     icon = ImageVector.vectorResource(R.drawable.outline_close_24),

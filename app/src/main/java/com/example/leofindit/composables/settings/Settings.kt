@@ -76,7 +76,7 @@ fun Settings(navController: NavController? = null) {
                     leadingText = "Information & Contact"
                 )
                 RoundedListItem(
-                    onClick = {navController?.navigate("Marked Devices")},
+                    onClick = { navController?.navigate("Marked Devices") },
                     icon = ImageVector.vectorResource(R.drawable.baseline_list_24) ,
                     color = Color.Gray,
                     leadingText = "Marked Device",

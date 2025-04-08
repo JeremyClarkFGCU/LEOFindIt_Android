@@ -30,17 +30,15 @@ import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoIcons
 import com.example.leofindit.ui.theme.Surface
 
-//todo pass device object
-//samsung tag for example only
 @Composable
-fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, address : String) {
+fun DeviceListEntry(navController: NavController? = null, device : BtleDevice) {
+    val address = device.deviceAddress
     Card(
         modifier = Modifier.size(width = 360.dp, height = 40.dp),
         colors = CardDefaults.cardColors(
             containerColor = Surface
         ),
         onClick = {
-            //navController?.clearBackStack("Tracker Details")
             navController?.navigate(route ="Tracker Details/$address")
         }
     ) {
@@ -95,7 +93,7 @@ fun DeviceListEntry(navController: NavController? = null, device : BtleDevice, a
 
 @Preview
 @Composable
-fun DeviceDetailEntryPreview() {
+fun DeviceDetailEntryPreview(navController: NavController? = null) {
         Surface(color = Surface) {
             Card(
                 modifier = Modifier.size(width = 360.dp, height = 40.dp),

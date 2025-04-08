@@ -97,7 +97,7 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun isDeviceMarked(device: BtleDevice) : Boolean {
-        return(!!device.getIsSuspicious() && !!device.getIsSafe())
+        return(device.getIsSuspicious() || device.getIsSafe())
     }
 
 
