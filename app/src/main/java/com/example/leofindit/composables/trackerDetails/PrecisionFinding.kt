@@ -2,6 +2,7 @@ package com.example.leofindit.composables.trackerDetails
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -24,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,14 +56,28 @@ import kotlin.math.floor
 @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
 @Composable
 fun PrecisionFinding(navController: NavController? = null, address: String, viewModel: BtleViewModel) {
-    // Create an infinite transition for animating the RSSI strength
+    val context = LocalContext.current
     LifecycleEventEffect(Lifecycle.Event.ON_PAUSE){viewModel.stopScanning()}
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME){viewModel.startScanning(address)}
 
     rememberInfiniteTransition(label = "RSSI Animation")
     viewModel.startScanning(address)
-    val device = viewModel.findDevice(address)
+    // Try finding the device. If it's null, show toast and navigate back.
+    val device = try {
+        viewModel.findDevice(address)
+    } catch (_: NoSuchElementException) {
+        null
+    }
 
+    if (device == null) {
+        LaunchedEffect(Unit) {
+            Toast.makeText(context, "Device is out of range", Toast.LENGTH_SHORT).show()
+            navController?.navigate("Manual Scan") {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+        return // 🚨 Critical: This stops rendering if device is null
+    }
 
     fun rssiNormalization(rssi: Int, minRssi : Int = -100, maxRssi : Int = -30 ) : Int {
         return((rssi - minRssi).toFloat()/ (maxRssi - minRssi) *100).toInt().coerceIn(0,100)
@@ -101,7 +118,7 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                text = device.deviceName,
+                text = device?.deviceName ?: "Unknown",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )

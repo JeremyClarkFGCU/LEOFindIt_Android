@@ -64,6 +64,7 @@ import java.util.concurrent.TimeUnit
 
 @SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
+@androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_SCAN)
 @Composable
 fun TrackerDetails(
     navController: NavController? = null,
@@ -296,7 +297,23 @@ fun TrackerDetails(
                 ) {
                     // list of options
                     RoundedListItem(
-                        onClick = { navController?.navigate(route = "Precision Finding/${address}") },
+                        onClick =  {
+                            //crashed on precision finding due to selecting this and device not found
+                            //find device on click here and make fail safe.
+                            viewModel.startScanning(address)
+                            try {
+                                viewModel.findDevice(address)
+                            } catch (_: NoSuchElementException) {
+                                null
+                            }
+                                if (device == null) {
+                                    Toast.makeText(context, "Device is out of range", Toast.LENGTH_SHORT).show()
+                                    navController?.navigate("Manual Scan") {
+                                        popUpTo(0) { inclusive = true } // This clears back stack
+                                    }
+                                }
+                            navController?.navigate(route = "Precision Finding/${address}")
+                                  },
                         color = Color(0xff007aff),
                         icon = ImageVector.vectorResource(R.drawable.outline_explore_24),
                         leadingText = "Locate Tracker", trailingText = "Nearby"
