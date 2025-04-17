@@ -15,12 +15,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -28,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,6 +62,7 @@ import com.example.leofindit.ui.theme.Background
 import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Purple40
 import com.example.leofindit.viewModels.BtleViewModel
 import java.util.concurrent.TimeUnit
@@ -74,7 +80,8 @@ fun TrackerDetails(
 // Device vars
     val device = viewModel!!.findDevice(address)
     var ignoreTracker by remember { mutableStateOf(viewModel.isDeviceMarked(device)) }
-    // val trackerName = trackerDetails?.deviceName ?: "Unknown"
+    var showDialog by remember { mutableStateOf(false) }
+    var nickname by remember { mutableStateOf(device.getNickName() ?: "") }
 // Time vars
     val timeStamp = device.timeStamp
     val timeDiffMillis = System.currentTimeMillis() - timeStamp
@@ -349,12 +356,24 @@ fun TrackerDetails(
                             )
                         }
                     )
+
+                    HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
+                    
+                    RoundedListItem(
+                        color = Color.Yellow,
+                        icon = Icons.Filled.Create,
+                        leadingText = "Create Nickname",
+                        trailingText = "Set Nickname",
+                        onClick = {
+                            showDialog = true
+                        }
+                    )
                 }
                 //
                 Text(
                     text = "Ignoring trackers will stop notifications in the background",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = OnSurface.copy(alpha = 0.6f)
                 )
 
                 Card(
@@ -382,11 +401,46 @@ fun TrackerDetails(
                 Text(
                     text = " Learn more, e.g how to disable the tracker",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = OnSurface.copy(alpha = 0.6f)
                 )
             }
         }
     }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text("Set Nickname", style = MaterialTheme.typography.titleLarge)
+            },
+            text = {
+                OutlinedTextField(
+                    value = nickname,
+                    onValueChange = { nickname = it },
+                    placeholder = { Text("Enter nickname") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel?.setNickName(address, nickname)
+                        showDialog = false
+                        Toast.makeText(context, "Nickname set!", Toast.LENGTH_SHORT).show()
+                    }
+                ) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
 }
 
 
@@ -412,6 +466,7 @@ fun TrackerDetailsPreview() {
     LeoFindItTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = Background) {
             val device = sampleBtleDevice
+            var nickname by remember { mutableStateOf(device.getNickName() ?: "") }
             var selectedIndex by remember { mutableIntStateOf(-1) }
             val timeStamp = device.timeStamp
 
@@ -621,12 +676,21 @@ fun TrackerDetailsPreview() {
                                     )
                                 }
                             )
+                            RoundedListItem(
+                                color = Color.Yellow,
+                                icon = Icons.Filled.Create,
+                                leadingText = "Create Nickname",
+                                trailingText = "Set Nickname",
+                                onClick = {
+
+                                }
+                            )
                         }
                         //
                         Text(
                             text = "Ignoring trackers will stop notifications in the background",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            color = OnSurface.copy(alpha = 0.6f)
                         )
 
                         Card(
@@ -649,12 +713,13 @@ fun TrackerDetailsPreview() {
                                 trailingIcon = ImageVector.vectorResource(R.drawable.baseline_link_24),
                                 iconModifier = Modifier.rotate(-45F)
                             )
+
                         }
 
                         Text(
                             text = " Learn more, e.g how to disable the tracker",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            color = OnSurface.copy(alpha = 0.6f)
                         )
                     }
                 }

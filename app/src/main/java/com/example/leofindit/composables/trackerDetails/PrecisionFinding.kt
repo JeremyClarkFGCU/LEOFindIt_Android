@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +46,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.example.leofindit.R
 import com.example.leofindit.composables.RoundedListItem
+import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.viewModels.BtleViewModel
 import kotlin.math.floor
@@ -63,34 +63,30 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
     rememberInfiniteTransition(label = "RSSI Animation")
     viewModel.startScanning(address)
     // Try finding the device. If it's null, show toast and navigate back.
-    val device = try {
-        viewModel.findDevice(address)
-    } catch (_: NoSuchElementException) {
-        null
-    }
+    val devices by viewModel.scannedDevices.collectAsState()
+    val device = devices.find { it.deviceAddress == address }
 
-    if (device == null) {
-        LaunchedEffect(Unit) {
-            Toast.makeText(context, "Device is out of range", Toast.LENGTH_SHORT).show()
-            navController?.navigate("Manual Scan") {
-                popUpTo(0) { inclusive = true }
-            }
-        }
-        return // 🚨 Critical: This stops rendering if device is null
-    }
+
+
+    val notFound = device == null
 
     fun rssiNormalization(rssi: Int, minRssi : Int = -100, maxRssi : Int = -30 ) : Int {
         return((rssi - minRssi).toFloat()/ (maxRssi - minRssi) *100).toInt().coerceIn(0,100)
     }
 
     val rawRssi by viewModel.signalStrength.collectAsState(initial = -100)
-    val normRssi = rssiNormalization(rssi = rawRssi!!.toInt())
+    val normRssi = if (!notFound && rawRssi != null) {
+        rssiNormalization(rawRssi!!)
+    } else {
+        null
+    }
+
+    val fillFraction = normRssi?.div(100f) ?: 0f
 
     val minColor = Color.Blue
     val maxColor = Color.Red
 
     // Calculate the fraction for filling (since max strength is 100)
-    val fillFraction = normRssi / 100f
     val hotCold = Color(
         red = lerp(minColor.red, maxColor.red, fillFraction),
         green = 0f,
@@ -118,22 +114,22 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                text = device?.deviceName ?: "Unknown",
+                text = device?.deviceName ?: "Unknown Device",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
             Column (horizontalAlignment = Alignment.CenterHorizontally){
                 Text(
-                    text = "${normRssi}%",
+                    text = normRssi?.let { "$it%" } ?: "Not Found",                style = MaterialTheme.typography.headlineLarge,
                     textAlign = TextAlign.Center,
                     fontSize = 100.sp,
                     fontWeight = FontWeight.Thin,
                     modifier = Modifier.padding(12.dp)
-
                 )
                 Text(
                     text = "Move slowly and try to maximize the signal strength to find the tracker.",
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = GoldPrimary
                 )
             }
             Card(
@@ -155,8 +151,13 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
                     color = Color.Red,
                     leadingText = "Close and Stop Searching",
                     onClick = {
-                        //viewModel.stopScanning()
-                        navController?.popBackStack()
+                        viewModel.stopScanning()
+                        if (device == null) {
+                            Toast.makeText(context, "Device not found. Navigating to home page.", Toast.LENGTH_SHORT).show()
+                            navController?.navigate("Manual Scan")
+                        } else {
+                            navController?.popBackStack()
+                        }
                     }
                 )
             }
