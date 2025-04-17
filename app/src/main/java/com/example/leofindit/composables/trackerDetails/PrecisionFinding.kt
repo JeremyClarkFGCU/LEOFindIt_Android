@@ -120,7 +120,8 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
             )
             Column (horizontalAlignment = Alignment.CenterHorizontally){
                 Text(
-                    text = normRssi?.let { "$it%" } ?: "Not Found",                style = MaterialTheme.typography.headlineLarge,
+                    text = normRssi?.let { "$it%" } ?: "Not Found",
+                    style = MaterialTheme.typography.headlineLarge,
                     textAlign = TextAlign.Center,
                     fontSize = 100.sp,
                     fontWeight = FontWeight.Thin,

@@ -36,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -83,7 +84,7 @@ fun TrackerDetails(
     var showDialog by remember { mutableStateOf(false) }
     var nickname by remember { mutableStateOf(device.getNickName() ?: "") }
 // Time vars
-    val timeStamp = device.timeStamp
+    val timeStamp by remember{ mutableLongStateOf( device.timeStamp ) }
     val timeDiffMillis = System.currentTimeMillis() - timeStamp
     val hours = TimeUnit.MILLISECONDS.toHours(timeDiffMillis)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiffMillis) - TimeUnit.HOURS.toMinutes(hours)
@@ -114,7 +115,10 @@ fun TrackerDetails(
     LazyColumn {
         item {
             Spacer(modifier = Modifier.size(56.dp))
-            // Device name
+            //********************************************************************************
+            //                    Device Name, Last Seen, and Safe/Sus Button
+            //********************************************************************************
+
             IconButton(onClick = { navController?.popBackStack() }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
@@ -243,6 +247,9 @@ fun TrackerDetails(
                         }
                     }
                 }
+                //********************************************************************************
+                //                       Device Address, Manufacturer, and Type
+                //********************************************************************************
                 Card(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
