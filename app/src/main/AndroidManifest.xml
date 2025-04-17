@@ -24,14 +24,15 @@
         android:roundIcon="@mipmap/leo_logo_drawable"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
-        tools:targetApi="31">
+        >
         <activity
+
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Leo_findit">
+            android:theme="@style/Theme.Leo_findit"
+            tools:targetApi="33">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

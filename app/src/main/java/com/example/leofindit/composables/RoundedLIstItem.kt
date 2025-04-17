@@ -19,7 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.leofindit.ui.theme.Background
+import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.Surface
 
 @Composable
@@ -34,29 +37,44 @@ fun RoundedListItem(
     customTrailingContent : @Composable (() -> Unit)? = null,
     iconModifier: Modifier = Modifier,
 ) {
+    fun shrinkText(string: String) : String {
+        return if(string.length >= 26) {
+            string.take(26) + "..."
+        } else
+            string
+    }
     ListItem(
         colors = ListItemDefaults.colors(containerColor = Surface,),
         leadingContent = {
-            Box(
-                modifier = modifier
-                    .size(24.dp) // Circle size
-                    .background(
-                        color = color,
-                        shape = CircleShape // Circle shape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (icon != null) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.background,
-                        modifier = modifier.size(20.dp)
-                    )
-                }
+            if (icon != null) {
+                Box(
+                    modifier = modifier
+                        .size(24.dp) // Circle size
+                        .background(
+                            color = color,
+                            shape = CircleShape // Circle shape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = Background,
+                            modifier = modifier.size(20.dp)
+                        )
+                    }
             }
         },
-        headlineContent = { Text(leadingText) },
+        headlineContent = {
+            Row(modifier= Modifier) {
+                Text(
+                    text = leadingText,
+                    color = GoldPrimaryDull,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+                          },
         trailingContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -65,9 +83,13 @@ fun RoundedListItem(
                     customTrailingContent()
                 } else {
                     Text(
-                        text = trailingText,
+                        text = shrinkText(trailingText),
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(end = 4.dp)
+                        modifier = Modifier.weight(12f,false).padding(end = 4.dp),
+                        color = Color.Gray,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+
                     )
                     Icon(
                         imageVector = trailingIcon,
