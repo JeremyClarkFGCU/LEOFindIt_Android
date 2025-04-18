@@ -56,20 +56,18 @@ import kotlin.math.floor
 @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
 @Composable
 fun PrecisionFinding(navController: NavController? = null, address: String, viewModel: BtleViewModel) {
+    // Pause scanning to save resources and battery
     val context = LocalContext.current
     LifecycleEventEffect(Lifecycle.Event.ON_PAUSE){viewModel.stopScanning()}
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME){viewModel.startScanning(address)}
 
-    rememberInfiniteTransition(label = "RSSI Animation")
+    // scanning for specific device
     viewModel.startScanning(address)
-    // Try finding the device. If it's null, show toast and navigate back.
     val devices by viewModel.scannedDevices.collectAsState()
     val device = devices.find { it.deviceAddress == address }
-
-
-
     val notFound = device == null
 
+    // Normilize rssi into a percentage
     fun rssiNormalization(rssi: Int, minRssi : Int = -100, maxRssi : Int = -30 ) : Int {
         return((rssi - minRssi).toFloat()/ (maxRssi - minRssi) *100).toInt().coerceIn(0,100)
     }
@@ -81,8 +79,12 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
         null
     }
 
+    // Fills the background based off the rssi
     val fillFraction = normRssi?.div(100f) ?: 0f
 
+    //********************************************************************************
+    //                    Hot (close) and Cold (far)
+    //********************************************************************************
     val minColor = Color.Blue
     val maxColor = Color.Red
 
@@ -93,6 +95,7 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
         blue = lerp(minColor.blue, maxColor.blue, fillFraction),
         alpha = 100f
     )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -147,6 +150,7 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
 //
 //                )
                 HorizontalDivider(thickness = Dp.Hairline)
+
                 RoundedListItem(
                     icon = ImageVector.vectorResource(R.drawable.outline_close_24),
                     color = Color.Red,

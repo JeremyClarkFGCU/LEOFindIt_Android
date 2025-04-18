@@ -159,7 +159,7 @@ fun ManualScanning(
 
         // Bt and Permissions check
         if (!isBluetoothOn || !isLocationOn) {
-            item { BluetoothOff() }
+            item { MissingPermissons() }
         }
         else {
             //if scanning on then show scanning

@@ -39,20 +39,21 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun BluetoothOff(navController: NavController? = null) {
+fun MissingPermissons(navController: NavController? = null) {
+    // getting the permissions
     val btPermissions = BtHelper.rememberPermissions()
     val locationPermissions = LocationHelper.rememberLocationPermissionState()
-
+    // checking BT status
     val isBtOn = BtHelper.checkingBtEnabledState()
     val btPermissionsSet = BtHelper.checkingBtPermissionState(btPermissions)
     val btSet = isBtOn.value && btPermissionsSet.value
-
+    // checking location status
     val isLocationOn = LocationHelper.checkingLocationEnabledState()
     val locationPermissionsSet = LocationHelper.checkingLocationPermissionState(locationPermissions)
     val isLocationSet = isLocationOn.value && locationPermissionsSet.value
 
-
     val context = LocalContext.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -77,6 +78,9 @@ fun BluetoothOff(navController: NavController? = null) {
         )
         Spacer(modifier = Modifier.size(0.dp))
         Row(horizontalArrangement = Arrangement.Center) {
+            //********************************************************************************
+            //                    Buttons to Fix status
+            //********************************************************************************
             if (!BtHelper.checkingBtPermissionState(btPermissions).value) {
                 Button(
                     onClick = { BtHelper.requestPermission(btPermissions, context) },
@@ -134,6 +138,9 @@ fun BluetoothOff(navController: NavController? = null) {
                 }
             }
         }
+        //********************************************************************************
+        //                    To view older tracker
+        //********************************************************************************
         TextButton (
             onClick = {navController?.navigate("Marked Devices")},
         ) {
@@ -151,7 +158,7 @@ fun BluetoothOff(navController: NavController? = null) {
 fun BluetoothOffPreview() {
     LeoFindItTheme {
         Surface (modifier = Modifier.fillMaxSize()) {
-            BluetoothOff()
+            MissingPermissons()
         }
     }
 }

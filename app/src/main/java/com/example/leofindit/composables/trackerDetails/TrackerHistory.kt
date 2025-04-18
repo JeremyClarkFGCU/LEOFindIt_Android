@@ -27,6 +27,9 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 @Composable
 fun TrackerHistory (navController: NavController? = null) {
     //header
+    //********************************************************************************
+    //                    Unused, add location history if added
+    //********************************************************************************
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
        // verticalArrangement = Arrangement.SpaceBetween

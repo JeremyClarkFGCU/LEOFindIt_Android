@@ -34,11 +34,13 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +68,7 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Purple40
 import com.example.leofindit.viewModels.BtleViewModel
+import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 
@@ -84,14 +87,21 @@ fun TrackerDetails(
     var showDialog by remember { mutableStateOf(false) }
     var nickname by remember { mutableStateOf(device.getNickName() ?: "") }
 // Time vars
-    val timeStamp by remember{ mutableLongStateOf( device.timeStamp ) }
-    val timeDiffMillis = System.currentTimeMillis() - timeStamp
+    var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentTime = System.currentTimeMillis()
+            delay(1000)
+        }
+    }
+    val deviceTimeStamp = rememberUpdatedState(newValue = device.timeStamp)
+    val timeDiffMillis = currentTime - deviceTimeStamp.value
     val hours = TimeUnit.MILLISECONDS.toHours(timeDiffMillis)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiffMillis) - TimeUnit.HOURS.toMinutes(hours)
     val seconds =
         TimeUnit.MILLISECONDS.toSeconds(timeDiffMillis) - TimeUnit.MINUTES.toSeconds(minutes)
     val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-
 // todo remove this or implement a version using a device variable
     val notCurrentlyReachable = false
 // context vars
@@ -296,14 +306,10 @@ fun TrackerDetails(
                     )
 
                 }
-                //map TBA
-//            MapView(ignored = ignoreTracker)
-//            Card(modifier = Modifier
-//                .height(200.dp)
-//                .width(400.dp),
-//                onClick = {}
-//            ){}
-                // options for tracker
+
+                //********************************************************************************
+                //                    Locate tracker, ignore tracker, nickname
+                //********************************************************************************
                 Card(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
@@ -382,19 +388,16 @@ fun TrackerDetails(
                     style = MaterialTheme.typography.bodySmall,
                     color = OnSurface.copy(alpha = 0.6f)
                 )
-
+                //********************************************************************************
+                //                    Manufacturer website
+                //********************************************************************************
                 Card(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .shadow(elevation = 16.dp),
                 ) {
-                    //Getting information about owner I don't think android will use this
-//                RoundedListItem(
-//                    onClick = {},
-//                    icon = ImageVector.vectorResource(R.drawable.outline_person_24),
-//                    color = colorResource(R.color.Orange),
-//                    leadingText = "Information About Owner",
-//                )
+                    // get database going with from device manufacturer and link with a website
+                    // Right now shows generic website to disable device
                     RoundedListItem(
                         onClick = { context.startActivity(webIntent) },
                         icon = ImageVector.vectorResource(R.drawable.outline_info_24),
@@ -413,7 +416,9 @@ fun TrackerDetails(
             }
         }
     }
-
+    //********************************************************************************
+    //                    Nickname dialog Logic
+    //********************************************************************************
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -450,7 +455,9 @@ fun TrackerDetails(
 
 }
 
-
+//********************************************************************************
+//                                      Preview
+//********************************************************************************
 @SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
