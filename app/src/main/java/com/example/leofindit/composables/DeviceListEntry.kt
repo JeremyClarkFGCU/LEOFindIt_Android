@@ -29,7 +29,10 @@ import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoIcons
 import com.example.leofindit.ui.theme.Surface
-
+//********************************************************************************
+//                    The Card that is used for displaying in
+//                    Scanning Home page
+//********************************************************************************
 @Composable
 fun DeviceListEntry(navController: NavController? = null, device : BtleDevice) {
     val address = device.deviceAddress
@@ -55,7 +58,7 @@ fun DeviceListEntry(navController: NavController? = null, device : BtleDevice) {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Icon(
-                    imageVector = LeoIcons.Bluetooth,
+                    imageVector = LeoIcons.Bluetooth, // Change once database of different device types
                     contentDescription = "Device Type Icon",
                     tint = Color.Unspecified
                 )

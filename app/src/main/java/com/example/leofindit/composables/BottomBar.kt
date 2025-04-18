@@ -23,7 +23,10 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.OnPrimary
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
-
+//********************************************************************************
+//                    not used navigation bar to navigate to
+//                    home and settings page
+//********************************************************************************
 @Composable
 fun BottomBar(navController: NavController? = null) {
     val items = listOf( "Scan", "Settings")

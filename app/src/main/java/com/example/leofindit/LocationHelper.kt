@@ -22,7 +22,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
-
+/*********************************************************************************
+ *                   Used to detect and handel Location Permissions,
+ *                   Services, also sets Manager on init
+ *********************************************************************************/
 object LocationHelper {
     private var locationManager: LocationManager? = null
 

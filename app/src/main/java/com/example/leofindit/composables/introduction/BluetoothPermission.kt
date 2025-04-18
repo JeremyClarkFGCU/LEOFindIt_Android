@@ -41,7 +41,9 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-
+/*********************************************************************************
+ *                   Bluetooth init permission page
+ *********************************************************************************/
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)

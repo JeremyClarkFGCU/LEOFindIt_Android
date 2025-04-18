@@ -33,9 +33,11 @@ fun MapView(geoLocation : Int? = null, ignored: Boolean? = null) {
         .width(400.dp),
         onClick = {}
     ){
-        //********************************************************************************
-        //                    Placeholder Until Map API is acquired
-        //********************************************************************************
+        /*********************************************************************************
+         *                   PlaceHolder for the map component
+         *                   if used add preview if device location
+         *                   is available. Needs Map API key
+         *********************************************************************************/
         if(geoLocation == null) {
              Column(
                  horizontalAlignment = Alignment.CenterHorizontally,

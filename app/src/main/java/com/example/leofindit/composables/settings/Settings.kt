@@ -29,7 +29,11 @@ import com.example.leofindit.R
 import com.example.leofindit.composables.RoundedListItem
 import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.LeoFindItTheme
-
+//********************************************************************************
+//                    Settings page, for now just has
+//                    Links to Marked Devices and app info
+//
+//********************************************************************************
 @Composable
 fun Settings(navController: NavController? = null) {
     LazyColumn(

@@ -44,7 +44,10 @@ import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.Surface
-
+//********************************************************************************
+//                    Page to display devices that are white
+//                    listed or black listed
+//********************************************************************************
 @Composable
 fun MarkedDevices(navController: NavController? = null) {
 
@@ -139,10 +142,7 @@ fun ExpandableCard(title: String, isExpanded: Boolean, onClick: () -> Unit, cont
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(
-    device = "spec:width=411dp,height=891dp,cutout=punch_hole,navigation=buttons",
-    showSystemUi = true
-)
+@Preview
 @Composable
 fun BlackListPreview() {
     LeoFindItTheme {

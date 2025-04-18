@@ -39,6 +39,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
+/*********************************************************************************
+*                   Page auto triggers when Bt service, Location service
+*                   Bt permission or Location permission is disabled
+*********************************************************************************/
 fun MissingPermissons(navController: NavController? = null) {
     // getting the permissions
     val btPermissions = BtHelper.rememberPermissions()

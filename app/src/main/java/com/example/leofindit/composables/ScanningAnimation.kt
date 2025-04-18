@@ -20,7 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
+/*********************************************************************************
+ *                   Actual scanning radar animation logic
+ *
+ *********************************************************************************/
 @Composable
 fun ScanningAnimation(
     size: Float,

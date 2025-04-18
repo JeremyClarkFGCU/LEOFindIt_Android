@@ -36,7 +36,11 @@ import com.example.leofindit.ui.theme.Surface
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-
+/*********************************************************************************
+ *                   Notification init page. If background
+ *                   tracking added this can be used.
+ *                   As of Now 4/2025 not used.
+ *********************************************************************************/
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

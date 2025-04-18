@@ -19,7 +19,11 @@ import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.GoldPrimaryDull
 import kotlinx.coroutines.delay
 
-
+//********************************************************************************
+//                    Scanning animation component with radar
+//                    shows a timer and link to older devices
+//
+//********************************************************************************
 @Composable
 fun Scanning(numberOfTrackers: Int? = 0, navController: NavController? = null) {
     var changeScanText by remember { mutableStateOf(false) }

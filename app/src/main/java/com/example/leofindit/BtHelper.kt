@@ -22,7 +22,10 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-
+/*********************************************************************************
+ *                   Used to detect and handel Bluetooth Permissions,
+ *                   Services, also sets adapter and Manager on init
+ *********************************************************************************/
 object BtHelper {
     private var bluetoothManager : BluetoothManager? = null
     private var bluetoothAdapter: BluetoothAdapter? = null

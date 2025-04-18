@@ -98,17 +98,17 @@ fun ManualScanning(
                 ) {
                     // Play Button
                     IconButton(
-                        onClick = { viewModel.startScanning() },
+                        onClick = { viewModel.stopScanning() },
                         enabled = isLocationOn && isBluetoothOn,
                         colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = if (isScanning) GoldPrimary else Color.Transparent
+                            containerColor = if (!isScanning) GoldPrimary else Color.Transparent
                         ),
                         modifier = Modifier.padding(end = 12.dp).size(24.dp)
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.baseline_play_arrow_24),
+                            imageVector = ImageVector.vectorResource(R.drawable.stop_24dp_e3e3e3_fill1_wght400_grad0_opsz24),
                             contentDescription = null,
-                            tint = if (isScanning) Color.Black else GoldPrimary
+                            tint = if (!isScanning) Color.Black else GoldPrimary
                         )
                     }
 
@@ -116,17 +116,19 @@ fun ManualScanning(
 
                     // Pause Button
                     IconButton(
-                        onClick = { viewModel.stopScanning() },
+                        onClick = { viewModel.startScanning() },
                         enabled = isLocationOn && isBluetoothOn,
                         colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = if (!isScanning) GoldPrimary else Color.Transparent
+                            containerColor = if (isScanning) GoldPrimary else Color.Transparent
+
                         ),
                         modifier = Modifier.padding(start = 12.dp).size(24.dp)
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.stop_24dp_e3e3e3_fill1_wght400_grad0_opsz24),
+                            imageVector = ImageVector.vectorResource(R.drawable.baseline_play_arrow_24),
                             contentDescription = null,
-                            tint = if (!isScanning && (isBluetoothOn && isLocationOn)) Color.Black else GoldPrimary
+                            tint = if (isScanning && (isBluetoothOn && isLocationOn)) Color.Black else GoldPrimary
+
                         )
                     }
                 }

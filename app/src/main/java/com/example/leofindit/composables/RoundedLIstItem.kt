@@ -24,22 +24,32 @@ import androidx.compose.ui.unit.dp
 import com.example.leofindit.ui.theme.Background
 import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.Surface
-
+//********************************************************************************
+//                    Function must be enclosed in a Card when
+//                    Grouped with other RoundedList Items template
+//                    below
+//********************************************************************************
+//Card(
+//modifier = Modifier
+//.padding(horizontal = 16.dp)
+//.shadow(elevation = 24.dp),
+//) { }
 @Composable
 fun RoundedListItem(
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    icon: ImageVector? = null,
-    color: Color = Color.Unspecified,
+    onClick: (() -> Unit)? = null, // optional onClick
+    icon: ImageVector? = null, // optional Icon
+    color: Color = Color.Unspecified, // Sets the Color of the circle around the icon
     leadingText: String,
     trailingText: String = "",
-    trailingIcon: ImageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-    customTrailingContent : @Composable (() -> Unit)? = null,
-    iconModifier: Modifier = Modifier,
+    trailingIcon: ImageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, // Icon at the end with default
+    customTrailingContent : @Composable (() -> Unit)? = null, // used for anything, in this case added a switch
+    iconModifier: Modifier = Modifier, // mainly used for icon size
 ) {
+    // Manufacturer name was too long used to shrink
     fun shrinkText(string: String) : String {
         return if(string.length >= 26) {
-            string.take(26) + "..."
+            string.take(10) + "..." // to customize the length of string before adding eclipse
         } else
             string
     }

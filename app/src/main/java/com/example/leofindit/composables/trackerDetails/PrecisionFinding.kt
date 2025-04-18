@@ -49,6 +49,8 @@ import com.example.leofindit.composables.RoundedListItem
 import com.example.leofindit.ui.theme.GoldPrimary
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.viewModels.BtleViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.floor
 
 
@@ -66,16 +68,19 @@ fun PrecisionFinding(navController: NavController? = null, address: String, view
     val devices by viewModel.scannedDevices.collectAsState()
     val device = devices.find { it.deviceAddress == address }
     val notFound = device == null
-
-    // Normilize rssi into a percentage
+    // Device signal strength
+    val signalStrengthState = MutableStateFlow<Int?>(device?.signalStrength) // Track RSSI values
+    val signalStrength: StateFlow<Int?> = signalStrengthState
+    // Normalize rssi into a percentage
     fun rssiNormalization(rssi: Int, minRssi : Int = -100, maxRssi : Int = -30 ) : Int {
         return((rssi - minRssi).toFloat()/ (maxRssi - minRssi) *100).toInt().coerceIn(0,100)
     }
 
-    val rawRssi by viewModel.signalStrength.collectAsState(initial = -100)
+    val rawRssi by signalStrength.collectAsState(initial = -100)
     val normRssi = if (!notFound && rawRssi != null) {
         rssiNormalization(rawRssi!!)
-    } else {
+    }
+    else {
         null
     }
 

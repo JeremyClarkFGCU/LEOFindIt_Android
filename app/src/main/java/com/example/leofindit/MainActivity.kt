@@ -9,7 +9,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
@@ -60,6 +59,9 @@ const val BLUETOOTH_PERMISSIONS_REQUEST_CODE = 101
 
 class MainActivity : ComponentActivity() {
     @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
+    /*********************************************************************************
+     *                   Device Bt scanning vars
+     *********************************************************************************/
     internal lateinit var deviceScanner: DeviceScanner
     private lateinit var permissionHandler: LEOPermissionHandler
     private lateinit var deviceController: DeviceController
@@ -67,8 +69,6 @@ class MainActivity : ComponentActivity() {
     private var tag = "MainActivity"
     private val btleViewModel: BtleViewModel by viewModels()
 
-    // Declare Activity Result Launcher
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     @SuppressLint("SupportAnnotationUsage", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         tag = "MainActivity.onCreate()"
@@ -97,50 +97,6 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(sharedPreferences.getBoolean("isFirstLaunch", true))
                 }
 
-
-//                var topBarContent by remember {
-//                    mutableStateOf<@Composable () -> Unit>({ MainTopAppBar(navController) {} })
-//                }
-//                val menuDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-//                val FilterDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-//                val scope = rememberCoroutineScope()
-//
-//                LaunchedEffect(navController) {
-//                    navController.currentBackStackEntryFlow.collect { entry ->
-//                        topBarContent = if (entry.destination.route == "Scan List") {
-//                            {
-//                                TopAppBarFilter(onMenuClick = {
-//                                    scope.launch {
-//                                        menuDrawerState.apply {
-//                                            if (isClosed) open() else close()
-//                                        }
-//                                    }
-//                                },
-//                                    onIconClick = {
-//                                        scope.launch {
-//                                            FilterDrawerState.apply {
-//                                                if (isClosed) open() else close()
-//                                            }
-//                                        }
-//                                    }
-//                                )
-//                            }
-//                        } else {
-//                            {
-//                                MainTopAppBar(navController, onMenuClick = {
-//                                    scope.launch {
-//                                        menuDrawerState.apply {
-//                                            if (isClosed) open() else close()
-//                                        }
-//                                    }
-//                                }
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Background,
@@ -150,35 +106,6 @@ class MainActivity : ComponentActivity() {
                        // if(currentRoute in showBottomBar) { BottomBar(mainNavController) }
                     },
                     floatingActionButton = {
-//                        if(currentRoute in showBottomBar) {
-//                            val isScanning by btleViewModel.isScanning.collectAsState()
-//                            FloatingActionButton(
-//                            onClick = {
-//                                if (!btleViewModel.isScanning()) {
-//                                    btleViewModel.startScanning()
-//                                }
-//                                else {
-//                                    btleViewModel.stopScanning()
-//                                }
-//                            },
-//                            containerColor = Color(0xff2e2921),
-//                            //modifier = Modifier.offset(y = (48).dp)
-//                        ) {
-//                            if (!isScanning) {
-//                                Icon(
-//                                    Icons.Filled.PlayArrow,
-//                                    contentDescription = "Play Button",
-//                                    tint = Color(0xffe9c16c)
-//                                )
-//                            } else {
-//                                Icon(
-//                                    imageVector = ImageVector.vectorResource(R.drawable.baseline_pause_24),
-//                                    contentDescription = "Pause Button",
-//                                    tint = Color.Unspecified
-//                                )
-//                            }
-//                        }
-//                    }
             },
                 ) { innerPadding ->
 
@@ -201,13 +128,6 @@ class MainActivity : ComponentActivity() {
 
         }
 
-//        deviceScanner.setScanCallback(object : DeviceScanner.ScanCallback {
-//            override fun onScanResult(devices: List<BtleDevice>) {
-//                scannedDevices.clear()
-//                scannedDevices.addAll(devices)
-//                println("Number of scanned devices: ${scannedDevices.size}")
-//            }
-//        })
         deviceScanner.setScanCallback { devices ->
                 scannedDevices.clear()
                 scannedDevices.addAll(devices)
@@ -223,52 +143,12 @@ class MainActivity : ComponentActivity() {
         deviceScanner.stopScanning()
     }
 }
-/*
-                MenuBar(drawerState = menuDrawerState, scope = scope,) {
-                    FilterSideSheet(drawerState = FilterDrawerState, scope = scope) {
-                        Scaffold(topBar = topBarContent) { innerPadding ->
-                            val modifier = Modifier.padding(innerPadding)
-                            val color = MaterialTheme.colorScheme.background
-
-                            NavHost(
-                                navController = navController,
-                                startDestination = "Start Scan"
-                            ) {
-                                composable("Start Scan") {
-                                    StartScan(navController = navController)
-                                    //FilterSideSheet()
-                                }
-                                composable("Scan List") {
-                                    ScanList(modifier = modifier, navController = navController)
-                                }
-                                composable(
-                                    route = "Device Details/{name}/{uuid}",
-                                    arguments = listOf(
-                                        navArgument("name") { type = NavType.StringType },
-                                        navArgument("uuid") { type = NavType.StringType },
-                                    )
-                                ) { backStackEntry ->
-                                    val name = backStackEntry.arguments?.getString("name")
-                                    val uuid = backStackEntry.arguments?.getString("uuid")
-                                    DeviceDetails(
-                                        navController = navController,
-                                        deviceName = name,
-                                        deviceUUID = uuid
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-*/
+/*********************************************************************************
+ *                   Main nav host, add any pages here
+ *********************************************************************************/
 @Composable
 @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
 @SuppressLint("SupportAnnotationUsage")
-
 fun MainNavigator(mainNavigator: NavHostController, viewModel: BtleViewModel) {
     NavHost(
         navController = mainNavigator,
@@ -304,7 +184,11 @@ fun MainNavigator(mainNavigator: NavHostController, viewModel: BtleViewModel) {
 }
 
 
-
+/*********************************************************************************
+ *                   NavHost used for introduction only
+ *                   used once on first launch. Only add
+ *                   for one time pages.
+ *********************************************************************************/
 @Composable
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)

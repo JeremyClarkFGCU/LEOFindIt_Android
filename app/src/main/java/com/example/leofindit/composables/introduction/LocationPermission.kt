@@ -39,7 +39,9 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-
+/*********************************************************************************
+ *                   Location init page
+ *********************************************************************************/
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 fun LocationAccess(navController: NavController? = null) {

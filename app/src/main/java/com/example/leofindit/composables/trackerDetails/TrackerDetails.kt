@@ -444,7 +444,7 @@ fun TrackerDetails(
                 ) {
                     Text("Save")
                 }
-            },
+                                                                                                                                        },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
                     Text("Cancel")

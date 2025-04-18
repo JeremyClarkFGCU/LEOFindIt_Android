@@ -9,21 +9,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.model.DeviceScanner
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-//view model for updating, scanning
+//view model to store scanned device list and scanning logic
 class BtleViewModel(application: Application) : AndroidViewModel(application) {
     private val _scannedDevices = MutableStateFlow<List<BtleDevice>>(emptyList())
     val scannedDevices: StateFlow<List<BtleDevice>> = _scannedDevices
 
     private val _isScanning = MutableStateFlow(false) // Keep track of scanning state
     val isScanning: StateFlow<Boolean> = _isScanning
-
-    private val _signalStrength = MutableStateFlow<Int?>(null) // Track RSSI values
-    val signalStrength: StateFlow<Int?> = _signalStrength
 
     private val deviceScanner = DeviceScanner(application.applicationContext)
 
@@ -51,21 +47,6 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             deviceScanner.startScanning()
-            while (_isScanning.value) { // Keep updating while scanning
-                val devices = _scannedDevices.value
-
-                val targetDevice = targetAddress?.let { address ->
-                    devices.find { it.deviceAddress == address }
-                }
-
-                if (targetDevice != null) {
-                    _signalStrength.value = targetDevice.signalStrength ?: -100
-                } else {
-                    _signalStrength.value = null
-                }
-
-                delay(250) // Update every second
-            }
         }
     }
 
@@ -95,7 +76,7 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
                 device.copy(isSafe = isSafe, isSuspicious = isSuspicious)
         Log.i("Device Call out", "Device: ${device.deviceName}, is suspicious = ${device.getIsSuspicious()}, is safe = ${device.getIsSafe()}")
     }
-
+    // to see if device is marked sus or safe
     fun isDeviceMarked(device: BtleDevice) : Boolean {
         return(device.getIsSuspicious() || device.getIsSafe())
     }
@@ -111,7 +92,7 @@ class BtleViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    //finds device based on device address (~MAC address... not really)
+    //finds device based on device address
     fun findDevice(address: String): BtleDevice {
         return _scannedDevices.value.find { it.deviceAddress == address }
             ?: throw NoSuchElementException("No device found with address: $address")

@@ -38,7 +38,9 @@ import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
 
-
+/*********************************************************************************
+ *                   Welcome page for app (once only)
+ *********************************************************************************/
 @Composable
 fun Introduction(navController: NavController? = null) {
     val primaryColor = MaterialTheme.colorScheme.primary

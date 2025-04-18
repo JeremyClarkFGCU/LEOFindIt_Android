@@ -30,7 +30,9 @@ import com.example.leofindit.ui.theme.GoldPrimaryDull
 import com.example.leofindit.ui.theme.LeoFindItTheme
 import com.example.leofindit.ui.theme.OnSurface
 import com.example.leofindit.ui.theme.Surface
-
+/*********************************************************************************
+ *                  When all into pages are complete
+ *********************************************************************************/
 @Composable
 fun PermissionsDone(navController: NavController? = null, onFinish: (() -> Unit)? = null) {
     Column (
