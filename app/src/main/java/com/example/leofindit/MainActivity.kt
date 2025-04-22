@@ -44,7 +44,7 @@ import com.example.leofindit.composables.trackerDetails.ObserveTracker
 import com.example.leofindit.composables.trackerDetails.PrecisionFinding
 import com.example.leofindit.composables.trackerDetails.TrackerDetails
 import com.example.leofindit.controller.DeviceController
-import com.example.leofindit.controller.LEOPermissionHandler
+import com.example.leofindit.controller.LeoPermissionHandler
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.model.DeviceScanner
 import com.example.leofindit.ui.theme.Background
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
      *                   Device Bt scanning vars
      *********************************************************************************/
     internal lateinit var deviceScanner: DeviceScanner
-    private lateinit var permissionHandler: LEOPermissionHandler
+    private lateinit var permissionHandler: LeoPermissionHandler
     private lateinit var deviceController: DeviceController
     private val scannedDevices = mutableStateListOf<BtleDevice>()
     private var tag = "MainActivity"
@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         deviceScanner = DeviceScanner(this)
-        permissionHandler = LEOPermissionHandler()
+        permissionHandler = LeoPermissionHandler()
         deviceController = DeviceController(deviceScanner, permissionHandler)
         enableEdgeToEdge()
         WindowCompat.getInsetsController(window, window.decorView)

@@ -475,7 +475,8 @@ fun TrackerDetailsPreview() {
         isSafe = true,
         isParent = false,
         isTarget = false,
-        nickName = null
+        nickName = "Airpods1",
+        deviceUuid = "01000212"
     )
     LeoFindItTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = Background) {
