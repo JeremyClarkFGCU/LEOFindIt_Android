@@ -13,7 +13,6 @@ import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.ui.theme.*
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
         /** This function controls the list container for the detected BTLE Devices in scanner.
          * @param List <BtleDevice> - Takes the list of detected devices from the controller

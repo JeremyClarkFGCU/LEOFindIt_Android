@@ -2,173 +2,217 @@
 
 package com.example.leofindit
 
-import DeviceDetailCard
-import android.app.AlertDialog
+import android.Manifest
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.Alignment
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.leofindit.composables.ManualScanning
+import com.example.leofindit.composables.introduction.BluetoothPermission
+import com.example.leofindit.composables.introduction.Introduction
+import com.example.leofindit.composables.introduction.LocationAccess
+import com.example.leofindit.composables.introduction.NotificationPermission
+import com.example.leofindit.composables.introduction.PermissionsDone
+import com.example.leofindit.composables.settings.AppInfo
+import com.example.leofindit.composables.settings.MarkedDevices
+import com.example.leofindit.composables.settings.Settings
+import com.example.leofindit.composables.trackerDetails.ObserveTracker
+import com.example.leofindit.composables.trackerDetails.PrecisionFinding
+import com.example.leofindit.composables.trackerDetails.TrackerDetails
 import com.example.leofindit.controller.DeviceController
-import com.example.leofindit.controller.LeoPermissionHandler
+import com.example.leofindit.controller.LEOPermissionHandler
 import com.example.leofindit.model.BtleDevice
 import com.example.leofindit.model.DeviceScanner
-import com.example.leofindit.ui.theme.*
-import com.example.leofindit.view.scanButton
-import com.example.leofindit.view.deviceListView
-import com.example.leofindit.view.appTopBar
-import android.util.Log
-import android.content.Intent
-import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
+import com.example.leofindit.ui.theme.Background
+import com.example.leofindit.ui.theme.LeoFindItTheme
+import com.example.leofindit.viewModels.BtleViewModel
+import kotlinx.coroutines.flow.map
 
 
 const val BLUETOOTH_PERMISSIONS_REQUEST_CODE = 101
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 
 class MainActivity : ComponentActivity() {
-
-    private lateinit var deviceScanner: DeviceScanner
-    private lateinit var permissionHandler: LeoPermissionHandler
+    @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
+    /*********************************************************************************
+     *                   Device Bt scanning vars
+     *********************************************************************************/
+    internal lateinit var deviceScanner: DeviceScanner
+    private lateinit var permissionHandler: LEOPermissionHandler
     private lateinit var deviceController: DeviceController
     private val scannedDevices = mutableStateListOf<BtleDevice>()
     private var tag = "MainActivity"
+    private val btleViewModel: BtleViewModel by viewModels()
 
-    // Declare Activity Result Launcher-> Needed for maintaining Bluetooth permissions.
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
-
+    @SuppressLint("SupportAnnotationUsage", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         tag = "MainActivity.onCreate()"
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         deviceScanner = DeviceScanner(this)
-        permissionHandler = LeoPermissionHandler()
+        permissionHandler = LEOPermissionHandler()
         deviceController = DeviceController(deviceScanner, permissionHandler)
-
-        // Initialize Activity Result Launcher
-        requestPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-                if (permissions.all { it.value }) {
-                    Log.d(tag, "requestPermissionLauncher all permissions granted.")
-                    deviceController.onPermissionsGranted()
-                } else {
-                    Log.w(tag,"User denied permissions, retrying permissions request.")
-                    deviceController.onPermissionsDenied()
-                    showPermissionDeniedDialog()
-                }
-            }
-
+        enableEdgeToEdge()
+        WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = false
         setContent {
-            Leo_findit_aosTheme { // This is the Compose theme.
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Background),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    appTopBar()
+            LeoFindItTheme {
+                BtHelper.init(context = this)
+                LocationHelper.locationInit(context = this)
+                val mainNavController = rememberNavController()
+                val introNavController = rememberNavController()
+                val showBottomBar = listOf("Manual Scan", "Settings", "App info")
+                val currentRoute by mainNavController.currentBackStackEntryFlow
+                    .map { it.destination.route }
+                    .collectAsState(initial = null)
 
-                    // State to control showing the detail card
-                    var selectedDevice by remember { mutableStateOf<BtleDevice?>(null) }
+                val context = applicationContext
+                val sharedPreferences = context.getSharedPreferences("app_prefs", MODE_PRIVATE)
+                var isFirstLaunch by remember {
+                    mutableStateOf(sharedPreferences.getBoolean("isFirstLaunch", true))
+                }
 
-                    if (selectedDevice == null) {
-                        deviceListView(
-                            devices = scannedDevices,
-                            onDeviceClick = { clickedDevice ->
-                                selectedDevice = clickedDevice // Update state on click
-                                Log.d("MainActivity", "Clicked on: ${clickedDevice.deviceName}")
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Background,
+                    topBar = {},
+                    bottomBar = {
+                        // only shows the bottom bar during the manual scan screen
+                       // if(currentRoute in showBottomBar) { BottomBar(mainNavController) }
+                    },
+                    floatingActionButton = {
+            },
+                ) { innerPadding ->
+
+                    if (isFirstLaunch) {
+                        IntroNavigator(
+                            introNavController,
+                            onFinish = {
+                                sharedPreferences.edit { putBoolean("isFirstLaunch", false) }
+                                isFirstLaunch = false //todo change back to false
                             }
                         )
                     } else {
-                        DeviceDetailCard(
-                            device = selectedDevice!!,
-                            onSafeClick = { device ->
-                                device.markSafe()
-                            },
-                            onSuspiciousClick = { device ->
-                                device.markSuspicious()
-                            },
-                            onTargetClick = { device ->
-                                device.isTarget = !device.isTarget
-                            },
-                            onNicknameChange = { newNickname ->
-                                selectedDevice!!.setNickName(newNickname)
-                            }
-                        ) {
-                            selectedDevice = null // Callback to close the detail card
-                        }
+                        MainNavigator(
+                            mainNavigator = mainNavController,
+                            viewModel = btleViewModel
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                    scanButton(
-                        scanning = deviceController.isScanning, // Pass scanning state (change button "scan" <-> "stop"
-                        onScanToggle = {
-                            deviceController.toggleScanning(
-                                this@MainActivity,
-                                requestPermissionLauncher
-                            )
-                        }  // Toggles Scan on button press.
-                    )
                 }
             }
+
         }
 
-
-        deviceScanner.setScanCallback(object : DeviceScanner.ScanCallback {
-            var tag = "MainActivity.deviceScanner.setcallback()"
-            override fun onScanResult(devices: List<BtleDevice>) {
+        deviceScanner.setScanCallback { devices ->
                 scannedDevices.clear()
                 scannedDevices.addAll(devices)
-                Log.d( tag,"Scanned ${scannedDevices.size} devices.")
-            }
-        })
+                println("Number of scanned devices: ${scannedDevices.size}")
+
+        }
 
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun onDestroy() {
         super.onDestroy()
         deviceScanner.stopScanning()
     }
-
-    /** This calls a Dialog box that double-checks that the user wants to deny bluetooth permissions.
-     * @return Nothing
-     */
-    private fun showPermissionDeniedDialog() {
-        tag = "MainActivity.showPermissionDeniedDialog()"
-        AlertDialog.Builder(this)
-            .setTitle("Permission Required")
-            .setMessage("Bluetooth and location permissions are essential for this app to function. Please grant the permissions in app settings.")
-            .setPositiveButton("Go to Settings") { _, _ ->
-                // Open app settings
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                val uri = Uri.fromParts("package", packageName, null)
-                intent.data = uri
-                startActivity(intent)
-            }
-            .setCancelable(false) // Prevent user from dismissing the dialog by tapping outside
-            .setNegativeButton("I don't want to use this app.") { _, _ ->
-                // Log the event when the user declines again.
-                Log.d(tag, "User refused to grant permissions.")
-                Toast.makeText(
-                    this@MainActivity,
-                    "App will now close. Please restart and grant permissions if you wish to use the app.",
-                    Toast.LENGTH_LONG
-                ).show()
-                // Optionally close the app after a delay here as well
-                Handler(Looper.getMainLooper()).postDelayed({
-                    finish()
-                }, 2000)
-            }
-            .show()
+}
+/*********************************************************************************
+ *                   Main nav host, add any pages here
+ *********************************************************************************/
+@Composable
+@RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
+@SuppressLint("SupportAnnotationUsage")
+fun MainNavigator(mainNavigator: NavHostController, viewModel: BtleViewModel) {
+    NavHost(
+        navController = mainNavigator,
+        startDestination = "Manual Scan"
+    ) {
+        composable("Manual Scan")  {
+            ManualScanning(navController = mainNavigator, viewModel = viewModel)
+        }
+        composable ("Tracker Details/{address}", arguments = listOf(navArgument("address") {type =
+            NavType.StringType}))
+        { backStackEntry ->
+            val  address = backStackEntry.arguments?.getString("address") ?:return@composable
+            TrackerDetails(navController = mainNavigator, viewModel = viewModel, address = address)
+        }
+        composable("Precision Finding/{address}", arguments = listOf(navArgument("address") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val address = backStackEntry.arguments?.getString("address") ?: return@composable
+            PrecisionFinding(navController = mainNavigator, viewModel = viewModel, address = address)
+        }
+        composable("Settings") {
+            Settings(navController = mainNavigator)
+        }
+        composable ("App info") {
+            AppInfo(navController = mainNavigator)
+        }
+        composable("Observe Tracker") {
+            ObserveTracker(navController = mainNavigator)
+        }
+        composable ("Marked Devices"){
+            MarkedDevices(navController = mainNavigator)
+        }
     }
+}
 
+
+/*********************************************************************************
+ *                   NavHost used for introduction only
+ *                   used once on first launch. Only add
+ *                   for one time pages.
+ *********************************************************************************/
+@Composable
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+fun IntroNavigator(introNavController: NavHostController, onFinish: () -> Unit) {
+    NavHost(
+        navController = introNavController,
+        startDestination = "Introduction"
+    ) {
+        composable("Introduction") {
+            Introduction(navController = introNavController)
+            //FilterSideSheet()
+        }
+        composable("Location Permission") {
+            LocationAccess(navController = introNavController)
+        }
+        composable("Bluetooth Permission")  {
+            BluetoothPermission(navController = introNavController)
+        }
+        //Notification permission is not needed for API > 33
+        composable("Notification Access") {
+            NotificationPermission(navController = introNavController)
+        }
+        composable("Permission Done") {
+            PermissionsDone(navController = introNavController,  onFinish = onFinish)
+        }
+    }
 }

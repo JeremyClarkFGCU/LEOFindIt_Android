@@ -3,5 +3,5 @@
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/Background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/leo_logo_drawable</item>
-        <item name="windowSplashScreenAnimationDuration">3000</item> <item name="postSplashScreenTheme">@style/Theme.Leo_findit_aos</item> </style>
+        <item name="windowSplashScreenAnimationDuration">3000</item> <item name="postSplashScreenTheme">@style/Theme.Leo_findit</item> </style>
 </resources>
