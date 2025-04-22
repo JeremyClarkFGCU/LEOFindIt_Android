@@ -1,7 +1,5 @@
 package com.example.leofindit.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -38,7 +36,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun Leo_findit_aosTheme(
+fun LeoFindItTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -56,6 +54,6 @@ fun Leo_findit_aosTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

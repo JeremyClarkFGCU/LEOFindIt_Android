@@ -1,15 +1,14 @@
 package com.example.leofindit.model
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanResult
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.core.util.isNotEmpty
 
@@ -46,12 +45,16 @@ class DeviceScanner(private val context: Context) {
     interface ScanCallback {
         fun onScanResult(devices: List<BtleDevice>)
     }
+    private var scanCallback: ((List<BtleDevice>) -> Unit)? = null
 
-    private var scanCallback: ScanCallback? = null
-
-    fun setScanCallback(callback: ScanCallback) {
+    fun setScanCallback(callback: (List<BtleDevice>) -> Unit) {
         scanCallback = callback
     }
+//    private var scanCallback: ScanCallback? = null
+//
+//    fun setScanCallback(callback: ScanCallback) {
+//        scanCallback = callback
+//    }
 
     private val leScanCallback = object : android.bluetooth.le.ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -152,7 +155,8 @@ class DeviceScanner(private val context: Context) {
                 // Update other properties as needed (e.g., if you want to update the device name from scan)
                 // existingDevice.deviceName = btleDevice.deviceName
             }
-            scanCallback?.onScanResult(scanResults)
+            //scanCallback?.onScanResult(scanResults)
+            scanCallback?.invoke((scanResults.toList()))
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -163,6 +167,7 @@ class DeviceScanner(private val context: Context) {
     /**
      * This function contains the core logic for calling system method to start BT Scan.
      */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun startScanning() {
         Log.d("DeviceScanner", "startScanning called")
         if (isScanning) return
@@ -182,6 +187,7 @@ class DeviceScanner(private val context: Context) {
 
     } // End of startScanning() function
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun stopScanning() {
         tag = "DeviceScanner.stopScanning()"
         Log.d(tag, "stopScanning called")

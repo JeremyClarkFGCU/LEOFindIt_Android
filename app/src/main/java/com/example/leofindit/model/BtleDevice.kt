@@ -2,6 +2,7 @@ package com.example.leofindit.model
 
 import android.util.Log
 
+
 data class BtleDevice(
     val deviceType: String,
     val deviceManufacturer: String,
