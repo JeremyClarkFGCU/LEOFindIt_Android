@@ -7,7 +7,7 @@ data class BtleDevice(
     val deviceManufacturer: String,
     val deviceName: String,
     val deviceAddress: String?,
-    val signalStrength: Int?,
+    var signalStrength: Int?,
     private var isSafe: Boolean,
     val isParent: Boolean,
     var isTarget: Boolean,
@@ -17,7 +17,7 @@ data class BtleDevice(
     val timeStamp: Long,
     var deviceUuid: String,
 
-){
+    ){
 
     private var lTag: String = "BTLEDevice"
 
@@ -35,7 +35,7 @@ data class BtleDevice(
         return isSafe
     }
 
-    fun setNickName(newNickName: String){
+    fun setNickName(newNickName: String) {
         var oldNickName = getNickName()
         nickName = newNickName
         Log.i(lTag, "User renamed $deviceType: $oldNickName to $newNickName.")

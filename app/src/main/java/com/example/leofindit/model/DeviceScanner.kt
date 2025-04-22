@@ -147,7 +147,10 @@ class DeviceScanner(private val context: Context) {
                 scanResults.add(btleDevice)
             } else {
                 // Device exists, update its data (e.g., RSSI)
-                scanResults[existingDeviceIndex] = btleDevice
+                val existingDevice = scanResults[existingDeviceIndex]
+                existingDevice.signalStrength = btleDevice.signalStrength
+                // Update other properties as needed (e.g., if you want to update the device name from scan)
+                // existingDevice.deviceName = btleDevice.deviceName
             }
             scanCallback?.onScanResult(scanResults)
         }

@@ -5,20 +5,53 @@ import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import com.example.leofindit.model.DeviceScanner
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.example.leofindit.model.BTLEDeviceDao
+import com.example.leofindit.model.BTLEDeviceEntity
+import com.example.leofindit.model.BtleDevice
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DeviceController(
     private val deviceScanner: DeviceScanner,
-    private val permissionHandler: LeoPermissionHandler
+    private val permissionHandler: LeoPermissionHandler,
+    private val btleDeviceDao: BTLEDeviceDao
 ) : LeoPermissionHandler.PermissionCallback {
 
     internal var isScanning by mutableStateOf(false)
     private var tag: String = "DeviceController"
+    private var _scannedDevices = mutableStateListOf<BtleDevice>()
+    val scannedDevices: List<BtleDevice> get() = _scannedDevices
 
     init { // Must initialize the permissions handler
         permissionHandler.setPermissionCallback(this)
     }
+
+    fun updateDeviceNickname(device: BtleDevice, newNickname: String) {
+        device.setNickName(newNickname) // Update in-memory object
+        CoroutineScope(Dispatchers.IO).launch {
+            val deviceEntity = BTLEDeviceEntity(
+                deviceAddress = device.deviceAddress ?: return@launch,
+                deviceManufacturer = device.deviceManufacturer,
+                deviceType = device.deviceType,
+                signalStrength = device.signalStrength ?: 0,
+                isSafe = device.getIsSafe(),
+                isSuspicious = device.getIsSuspicious()
+            )
+            btleDeviceDao.update(deviceEntity) // Update in database
+            //find the index of the device and update the list
+            val index = _scannedDevices.indexOfFirst { it.deviceAddress == device.deviceAddress }
+            if (index != -1) {
+                _scannedDevices[index] = device
+            }
+        }
+    }
+
+
+
 
     /**
      * This function determines if the app is already scanning.
@@ -27,8 +60,6 @@ class DeviceController(
      * @context This must be an Activity. called from MainActivity, so it should be correct.
      * @return No return type. This calls other methods
      */
-
-
     fun startScanning(
         context: Activity,
         requestPermissionLauncher: ActivityResultLauncher<Array<String>>
@@ -53,6 +84,7 @@ class DeviceController(
             deviceScanner.startScanning()
             isScanning = true
         }
+        tag = "DeviceController"
     }
 
     override fun onPermissionsGranted() {
@@ -79,6 +111,7 @@ class DeviceController(
         context: Activity,
         requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     ) {
+        tag = "DeviceController.toggleScanning() called with activity: $context"
         if (isScanning) {
             deviceScanner.stopScanning()
             isScanning = false
@@ -87,5 +120,6 @@ class DeviceController(
             startScanning(context, requestPermissionLauncher)
             Log.d(tag, "Scanning started")
         }
+        tag = "DeviceController"
     }
 }

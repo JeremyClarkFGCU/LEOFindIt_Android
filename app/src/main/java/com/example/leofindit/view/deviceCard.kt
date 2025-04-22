@@ -75,7 +75,7 @@ fun deviceCard(device: BtleDevice, onClick: (BtleDevice) -> Unit) { // Add onCli
                 // Right: Signal Strength Icon
                 val signalStrengthIcon = when {
                     device.signalStrength!! >= -50 -> LeoIcons.SignalStrengthHigh
-                    device.signalStrength >= -70 -> LeoIcons.SignalStrengthMed
+                    device.signalStrength!! >= -70 -> LeoIcons.SignalStrengthMed
                     else -> LeoIcons.SignalStrengthLow
                 }
 

@@ -31,12 +31,13 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
+import com.example.leofindit.model.AppDatabase
+import com.example.leofindit.model.BTLEDeviceDao
 
 
 const val BLUETOOTH_PERMISSIONS_REQUEST_CODE = 101
 
 class MainActivity : ComponentActivity() {
-
     private lateinit var deviceScanner: DeviceScanner
     private lateinit var permissionHandler: LeoPermissionHandler
     private lateinit var deviceController: DeviceController
@@ -46,13 +47,14 @@ class MainActivity : ComponentActivity() {
     // Declare Activity Result Launcher-> Needed for maintaining Bluetooth permissions.
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
+    private lateinit var btleDeviceDao: BTLEDeviceDao // Declare btleDeviceDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         tag = "MainActivity.onCreate()"
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         deviceScanner = DeviceScanner(this)
         permissionHandler = LeoPermissionHandler()
-        deviceController = DeviceController(deviceScanner, permissionHandler)
 
         // Initialize Activity Result Launcher
         requestPermissionLauncher =
@@ -61,11 +63,19 @@ class MainActivity : ComponentActivity() {
                     Log.d(tag, "requestPermissionLauncher all permissions granted.")
                     deviceController.onPermissionsGranted()
                 } else {
-                    Log.w(tag,"User denied permissions, retrying permissions request.")
+                    Log.w(
+                        tag,
+                        "User denied permissions, retrying permissions request."
+                    )
                     deviceController.onPermissionsDenied()
                     showPermissionDeniedDialog()
                 }
             }
+
+        val database = AppDatabase.getDatabase(this)  // Get the database instance
+        btleDeviceDao = database.btleDeviceDao()  // Get the DAO
+
+        deviceController = DeviceController(deviceScanner, permissionHandler, btleDeviceDao)  // Pass the DAO
 
         setContent {
             Leo_findit_aosTheme { // This is the Compose theme.
@@ -101,11 +111,12 @@ class MainActivity : ComponentActivity() {
                                 device.isTarget = !device.isTarget
                             },
                             onNicknameChange = { newNickname ->
-                                selectedDevice!!.setNickName(newNickname)
+                                deviceController.updateDeviceNickname(selectedDevice!!, newNickname)
+                            },
+                            onClose = {
+                                selectedDevice = null // Callback to close the detail card
                             }
-                        ) {
-                            selectedDevice = null // Callback to close the detail card
-                        }
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -128,7 +139,7 @@ class MainActivity : ComponentActivity() {
             override fun onScanResult(devices: List<BtleDevice>) {
                 scannedDevices.clear()
                 scannedDevices.addAll(devices)
-                Log.d( tag,"Scanned ${scannedDevices.size} devices.")
+                Log.d(tag, "Scanned ${scannedDevices.size} devices.")
             }
         })
 
